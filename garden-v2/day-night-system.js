@@ -1,3 +1,8 @@
+if (window.__dayNightSystemLoaded) {
+  console.warn('Day/Night system already loaded');
+} else {
+  window.__dayNightSystemLoaded = true;
+
 /* ============================================
    DAY/NIGHT CYCLE SYSTEM
    Système de cycle jour/nuit avec mécaniques spéciales
@@ -421,3 +426,5 @@ setInterval(() => {
 }, 1000);
 
 console.log('✅ Day/Night Cycle System loaded');
+
+}

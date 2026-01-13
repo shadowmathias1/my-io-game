@@ -1,3 +1,8 @@
+if (window.__dayNightUiLoaded) {
+  console.warn('Day/Night UI already loaded');
+} else {
+  window.__dayNightUiLoaded = true;
+
 /* ============================================
    DAY/NIGHT UI
    Interface pour le système jour/nuit
@@ -364,3 +369,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+}
