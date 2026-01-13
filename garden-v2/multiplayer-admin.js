@@ -643,8 +643,6 @@ function adminUnbanAll() {
   showToast('? Bans reinitialises', 'success');
 }
 
-}
-
 // ============================================
 // RECEVOIR DES CADEAUX ADMIN
 // ============================================
