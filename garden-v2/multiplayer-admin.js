@@ -286,6 +286,11 @@ function authenticateAdmin(password) {
   multiplayerState.socket.emit('admin-authenticate', password);
 }
 
+function requestPlayersList() {
+  if (!multiplayerState.connected || !multiplayerState.socket) return;
+  multiplayerState.socket.emit('admin-request-players');
+}
+
 // ============================================
 // ACTIONS ADMIN
 // ============================================
@@ -926,6 +931,7 @@ function openAdminMultiplayerPanel() {
   if (modalElement) {
     modalElement.classList.add('show');
     sendPlayerUpdate();
+    requestPlayersList();
     renderAdminPlayersList();
   }
 }

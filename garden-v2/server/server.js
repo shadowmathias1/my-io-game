@@ -89,7 +89,16 @@ io.on("connection", (socket) => {
     admins.add(socket.id);
     socket.emit("admin-authenticated");
     emitPlayersList();
+  });  socket.on("admin-request-players", () => {
+    if (!admins.has(socket.id)) {
+      socket.emit("admin-error", "Admin access required");
+      return;
+    }
+    const list = Array.from(players.values());
+    socket.emit("players-list", list);
   });
+
+
 
   socket.on("admin-action", (payload = {}) => {
     if (!admins.has(socket.id)) {
