@@ -25,6 +25,8 @@ const io = new Server(server, {
 const players = new Map();
 const admins = new Set();
 
+const bannedIps = new Set();
+
 const allowedWeather = new Set(["sun", "rain", "cloud", "storm", "frost"]);
 const allowedSeason = new Set(["spring", "summer", "autumn", "winter"]);
 
@@ -35,6 +37,14 @@ function sanitizeNumber(value, fallback = 0) {
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
+}
+
+function getClientIp(socket) {
+  const forwarded = socket.handshake.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string' && forwarded.trim()) {
+    return forwarded.split(',')[0].trim();
+  }
+  return socket.handshake.address;
 }
 
 function normalizePlayer(socketId, data) {
@@ -59,6 +69,12 @@ function emitPlayersList() {
 }
 
 io.on("connection", (socket) => {
+  const clientIp = getClientIp(socket);
+  if (bannedIps.has(clientIp)) {
+    socket.disconnect(true);
+    return;
+  }
+
   socket.on("player-update", (data = {}) => {
     const player = normalizePlayer(socket.id, data);
     players.set(socket.id, player);
@@ -148,6 +164,29 @@ io.on("connection", (socket) => {
         type: "change-season",
         season: payload.season
       });
+      return;
+    }
+
+    if (type === "force-night" || type === "force-day") {
+      if (!ensurePlayer()) return;
+      io.to(targetId).emit("admin-gift", { type });
+      return;
+    }
+
+    if (type === "pest-infect") {
+      const pestId = payload.pestId;
+      if (typeof pestId !== "string" || !pestId || pestId.length > 32) {
+        socket.emit("admin-error", "Invalid pest");
+        return;
+      }
+      if (!ensurePlayer()) return;
+      io.to(targetId).emit("admin-gift", { type: "pest-infect", pestId });
+      return;
+    }
+
+    if (type === "pest-clear") {
+      if (!ensurePlayer()) return;
+      io.to(targetId).emit("admin-gift", { type: "pest-clear" });
       return;
     }
 
@@ -272,6 +311,26 @@ io.on("connection", (socket) => {
     if (type === "reset-save") {
       if (!ensurePlayer()) return;
       io.to(targetId).emit("admin-gift", { type: "reset-save" });
+      return;
+    }
+
+    if (type === "ban-player") {
+      if (!ensurePlayer()) return;
+      const targetSocket = io.sockets.sockets.get(targetId);
+      if (!targetSocket) {
+        socket.emit("admin-error", "Player not found");
+        return;
+      }
+      const ip = getClientIp(targetSocket);
+      if (ip) {
+        bannedIps.add(ip);
+      }
+      targetSocket.disconnect(true);
+      return;
+    }
+
+    if (type === "unban-all") {
+      bannedIps.clear();
       return;
     }
 

@@ -17,7 +17,8 @@ const multiplayerState = {
   isAdmin: false,
   playerId: null,
   players: [],
-  adminMode: false
+  adminMode: false,
+  selectedTargetId: null
 };
 
 // ============================================
@@ -195,6 +196,49 @@ function buildBuildingOptions(selectedId) {
     }).join('');
   }
   return '<option value="sprinkler">Arrosoir</option>';
+}
+
+function buildPestOptions(selectedId) {
+  if (typeof PEST_TYPES !== 'undefined') {
+    const pests = Object.values(PEST_TYPES);
+    return pests.map((pest) => {
+      const id = pest.id || '';
+      const label = pest.name || id;
+      const selected = id == selectedId ? 'selected' : '';
+      return `<option value="${id}" ${selected}>${label}</option>`;
+    }).join('');
+  }
+  return '<option value="">Aucun</option>';
+}
+
+function buildPlayerSelectOptions(selectedId) {
+  return multiplayerState.players.map((player) => {
+    const suffix = player.id === multiplayerState.playerId ? ' (vous)' : '';
+    const label = `${player.name}${suffix}`;
+    const selected = player.id === selectedId ? 'selected' : '';
+    return `<option value="${player.id}" ${selected}>${label}</option>`;
+  }).join('');
+}
+
+function getDefaultTargetId() {
+  const other = multiplayerState.players.find((player) => player.id !== multiplayerState.playerId);
+  if (other) return other.id;
+  return multiplayerState.players.length ? multiplayerState.players[0].id : null;
+}
+
+function getActiveTargetId() {
+  const current = multiplayerState.selectedTargetId;
+  if (current && multiplayerState.players.some((player) => player.id === current)) {
+    return current;
+  }
+  const fallback = getDefaultTargetId();
+  multiplayerState.selectedTargetId = fallback;
+  return fallback;
+}
+
+function setAdminTarget(targetId) {
+  multiplayerState.selectedTargetId = targetId;
+  renderAdminPlayersList();
 }
 
 function getNumberInputValue(id, fallback = 0) {
@@ -511,6 +555,93 @@ function adminResetSave(targetPlayerId) {
   });
 
   showToast('♻️ Reset envoye', 'warning');
+
+function adminForceNight(targetPlayerId) {
+  if (!multiplayerState.isAdmin) {
+    showToast('? Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'force-night',
+    targetId: targetPlayerId
+  });
+
+  showToast('?? Nuit forcee', 'success');
+}
+
+function adminForceDay(targetPlayerId) {
+  if (!multiplayerState.isAdmin) {
+    showToast('? Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'force-day',
+    targetId: targetPlayerId
+  });
+
+  showToast('?? Jour force', 'success');
+}
+
+function adminPestInfect(targetPlayerId, pestId) {
+  if (!multiplayerState.isAdmin) {
+    showToast('? Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'pest-infect',
+    targetId: targetPlayerId,
+    pestId: pestId
+  });
+
+  showToast('?? Infection envoyee', 'success');
+}
+
+function adminPestClear(targetPlayerId) {
+  if (!multiplayerState.isAdmin) {
+    showToast('? Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'pest-clear',
+    targetId: targetPlayerId
+  });
+
+  showToast('?? Maladies nettoyees', 'success');
+}
+
+function adminBanPlayer(targetPlayerId) {
+  if (!multiplayerState.isAdmin) {
+    showToast('? Acces admin requis', 'error');
+    return;
+  }
+
+  if (!confirm('Bannir ce joueur ?')) return;
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'ban-player',
+    targetId: targetPlayerId
+  });
+
+  showToast('? Joueur banni', 'warning');
+}
+
+function adminUnbanAll() {
+  if (!multiplayerState.isAdmin) {
+    showToast('? Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'unban-all'
+  });
+
+  showToast('? Bans reinitialises', 'success');
+}
+
 }
 
 // ============================================
@@ -536,6 +667,43 @@ function handleAdminGift(data) {
     if (harvested == 0) {
       showToast('Aucune plante prete', 'info');
     }
+  };
+
+  const forceDayNight = (mode) => {
+    if (typeof dayNightState === 'undefined') return;
+    dayNightState.current = mode;
+    dayNightState.cycleStart = Date.now();
+    if (mode == 'night') {
+      const duration = typeof DAY_NIGHT_CONFIG !== 'undefined' ? DAY_NIGHT_CONFIG.nightDuration : 720000;
+      dayNightState.nextTransition = Date.now() + duration;
+    } else {
+      const duration = typeof DAY_NIGHT_CONFIG !== 'undefined' ? DAY_NIGHT_CONFIG.dayDuration : 720000;
+      dayNightState.nextTransition = Date.now() + duration;
+    }
+    if (typeof applyDayNightTheme === 'function') {
+      applyDayNightTheme();
+    }
+  };
+
+  const infectRandomPlot = (pestId) => {
+    if (typeof infectPlot !== 'function' || !state?.garden?.plots) return;
+    if (!state.pests) state.pests = { activePests: {}, totalInfections: 0, totalCured: 0, treatmentsUsed: 0, protection: null };
+    if (!state.pests.activePests) state.pests.activePests = {};
+
+    const candidates = [];
+    state.garden.plots.forEach((plot, index) => {
+      if (!plot || !plot.plantId) return;
+      if (state.pests.activePests[index]) return;
+      candidates.push(index);
+    });
+
+    if (!candidates.length) {
+      showToast('Aucune plante a infecter', 'warning');
+      return;
+    }
+
+    const index = candidates[Math.floor(Math.random() * candidates.length)];
+    infectPlot(index, pestId);
   };
 
   switch (data.type) {
@@ -584,6 +752,36 @@ function handleAdminGift(data) {
         showToast(`?? Saison: ${getSeasonLabel(data.season)}`, 'info');
         applyRender();
       }
+      break;
+    }
+
+    case 'force-night': {
+      forceDayNight('night');
+      showToast('?? Nuit forcee', 'info');
+      applyRender();
+      break;
+    }
+
+    case 'force-day': {
+      forceDayNight('day');
+      showToast('?? Jour force', 'info');
+      applyRender();
+      break;
+    }
+
+    case 'pest-infect': {
+      if (data.pestId) {
+        infectRandomPlot(data.pestId);
+        applyRender();
+      }
+      break;
+    }
+
+    case 'pest-clear': {
+      if (!state.pests) state.pests = { activePests: {} };
+      state.pests.activePests = {};
+      showToast('?? Maladies nettoyees', 'success');
+      applyRender();
       break;
     }
 
@@ -786,255 +984,133 @@ function renderAdminPlayersList() {
     return;
   }
 
-  container.innerHTML = multiplayerState.players.map(player => {
-    const seasonLabel = getSeasonLabel(player.season);
-    const weatherLabel = getWeatherLabel(player.weather);
-    const seasonOptions = buildSeasonOptions(player.season);
-    const weatherOptions = buildWeatherOptions(player.weather);
-    const plantOptions = buildPlantOptions();
-    const buildingOptions = buildBuildingOptions();
+  const targetId = getActiveTargetId();
+  const target = multiplayerState.players.find((player) => player.id === targetId) || multiplayerState.players[0];
+  const playerOptions = buildPlayerSelectOptions(target?.id);
+  const seasonOptions = buildSeasonOptions(target?.season);
+  const weatherOptions = buildWeatherOptions(target?.weather);
+  const plantOptions = buildPlantOptions();
+  const buildingOptions = buildBuildingOptions();
+  const pestOptions = buildPestOptions();
+  const isSelf = target && target.id === multiplayerState.playerId;
 
-    return `
+  container.innerHTML = `
     <div class="admin-player-card" style="
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.9));
-      border: 2px solid rgba(52, 152, 219, 0.3);
+      border: 2px solid rgba(46, 204, 113, 0.35);
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 15px;
     ">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
         <div>
-          <h3 style="margin: 0 0 10px 0; color: #3498db;">
-            ${player.id === multiplayerState.playerId ? '?? ' : ''}${player.name}
-          </h3>
-          <div style="display: flex; gap: 20px; font-size: 0.9em; color: var(--text-light);">
-            <span>?? ${player.coins.toLocaleString()} coins</span>
-            <span>??? Niv. ${player.level}</span>
-            <span>?? Prestige ${player.prestigeLevel}</span>
-          </div>
-          <div style="display: flex; gap: 15px; margin-top: 8px; font-size: 0.85em;">
-            <span>?? ${seasonLabel}</span>
-            <span>??? ${weatherLabel}</span>
-          </div>
-        </div>
-        ${player.id !== multiplayerState.playerId ? `
-          <button
-            class="btn danger"
-            onclick="adminKickPlayer('${player.id}')"
-            style="font-size: 0.85em; padding: 6px 12px;"
+          <h3 style="margin: 0 0 8px 0; color: #2ecc71;">Joueur cible</h3>
+          <select
+            id="admin-target-select"
+            onchange="setAdminTarget(this.value)"
+            style="min-width: 240px; padding: 8px; border-radius: 8px; border: 2px solid #2ecc71;"
           >
-            ?? Kick
-          </button>
-        ` : ''}
+            ${playerOptions}
+          </select>
+        </div>
+        <div style="text-align: right; color: var(--text-light);">
+          <div>Connectes: ${multiplayerState.players.length}</div>
+          <div style="font-size: 0.85em;">ID: ${(target && target.id) ? target.id.slice(0, 6) + '...' : '--'}</div>
+        </div>
       </div>
 
-      ${player.id !== multiplayerState.playerId ? `
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 15px;">
-          <div style="display: flex; gap: 5px;">
-            <input
-              type="number"
-              id="coins-${player.id}"
-              placeholder="Montant"
-              value="1000"
-              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #2ecc71; font-size: 0.9em;"
-            />
-            <button
-              class="btn"
-              onclick="adminAdjustCoins('${player.id}', getNumberInputValue('coins-${player.id}', 0))"
-              style="background: #2ecc71; font-size: 0.9em; padding: 8px 10px;"
-            >
-              +/?
-            </button>
-            <button
-              class="btn"
-              onclick="adminSetCoins('${player.id}', getNumberInputValue('coins-${player.id}', 0))"
-              style="background: #27ae60; font-size: 0.9em; padding: 8px 10px;"
-            >
-              =
-            </button>
-          </div>
+      <div style="margin-top: 12px; display: grid; gap: 6px; font-size: 0.9em; color: var(--text-light);">
+        <div>?? ${target?.coins?.toLocaleString?.() || 0} coins ? ??? Niv. ${target?.level || 1} ? ?? Prestige ${target?.prestigeLevel || 0}</div>
+        <div>?? ${getSeasonLabel(target?.season)} ? ??? ${getWeatherLabel(target?.weather)}</div>
+      </div>
 
-          <div style="display: flex; gap: 5px;">
-            <select
-              id="weather-${player.id}"
-              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #3498db; font-size: 0.9em;"
-            >
-              ${weatherOptions}
-            </select>
-            <button
-              class="btn"
-              onclick="adminChangeWeather('${player.id}', getSelectValue('weather-${player.id}', 'sun'))"
-              style="background: #3498db; font-size: 0.9em; padding: 8px 12px;"
-            >
-              ???
-            </button>
-          </div>
-
-          <div style="display: flex; gap: 5px;">
-            <select
-              id="season-${player.id}"
-              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #9b59b6; font-size: 0.9em;"
-            >
-              ${seasonOptions}
-            </select>
-            <button
-              class="btn"
-              onclick="adminChangeSeason('${player.id}', getSelectValue('season-${player.id}', 'spring'))"
-              style="background: #9b59b6; font-size: 0.9em; padding: 8px 12px;"
-            >
-              ??
-            </button>
-          </div>
-
-          <div style="display: flex; gap: 5px;">
-            <select
-              id="seed-${player.id}"
-              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #16a085; font-size: 0.9em;"
-            >
-              ${plantOptions}
-            </select>
-            <input
-              type="number"
-              id="seed-amount-${player.id}"
-              value="5"
-              style="width: 80px; padding: 8px; border-radius: 6px; border: 2px solid #16a085; font-size: 0.9em;"
-            />
-            <button
-              class="btn"
-              onclick="adminSendSeeds('${player.id}', getSelectValue('seed-${player.id}'), getNumberInputValue('seed-amount-${player.id}', 1))"
-              style="background: #16a085; font-size: 0.9em; padding: 8px 12px;"
-            >
-              ??
-            </button>
-          </div>
-
-          <div style="display: flex; gap: 5px;">
-            <input
-              type="number"
-              id="seed-all-${player.id}"
-              value="3"
-              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #1abc9c; font-size: 0.9em;"
-            />
-            <button
-              class="btn"
-              onclick="adminSendSeedsAll('${player.id}', getNumberInputValue('seed-all-${player.id}', 1))"
-              style="background: #1abc9c; font-size: 0.9em; padding: 8px 12px;"
-            >
-              ?? All
-            </button>
-            <button
-              class="btn danger"
-              onclick="adminClearSeeds('${player.id}')"
-              style="font-size: 0.9em; padding: 8px 12px;"
-            >
-              Clear
-            </button>
-          </div>
-
-          <div style="display: flex; gap: 5px;">
-            <select
-              id="harvest-${player.id}"
-              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #f39c12; font-size: 0.9em;"
-            >
-              ${plantOptions}
-            </select>
-            <input
-              type="number"
-              id="harvest-amount-${player.id}"
-              value="3"
-              style="width: 80px; padding: 8px; border-radius: 6px; border: 2px solid #f39c12; font-size: 0.9em;"
-            />
-            <button
-              class="btn"
-              onclick="adminAddHarvest('${player.id}', getSelectValue('harvest-${player.id}'), getNumberInputValue('harvest-amount-${player.id}', 1))"
-              style="background: #f39c12; font-size: 0.9em; padding: 8px 12px;"
-            >
-              ??
-            </button>
-          </div>
-
-          <div style="display: flex; gap: 5px;">
-            <select
-              id="building-${player.id}"
-              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #8e44ad; font-size: 0.9em;"
-            >
-              ${buildingOptions}
-            </select>
-            <input
-              type="number"
-              id="building-amount-${player.id}"
-              value="1"
-              style="width: 80px; padding: 8px; border-radius: 6px; border: 2px solid #8e44ad; font-size: 0.9em;"
-            />
-            <button
-              class="btn"
-              onclick="adminAddBuilding('${player.id}', getSelectValue('building-${player.id}'), getNumberInputValue('building-amount-${player.id}', 1))"
-              style="background: #8e44ad; font-size: 0.9em; padding: 8px 12px;"
-            >
-              ???
-            </button>
-          </div>
-
-          <div style="display: flex; gap: 5px;">
-            <input
-              type="number"
-              id="prestige-${player.id}"
-              value="0"
-              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #c0392b; font-size: 0.9em;"
-            />
-            <button
-              class="btn"
-              onclick="adminSetPrestigeLevel('${player.id}', getNumberInputValue('prestige-${player.id}', 0))"
-              style="background: #c0392b; font-size: 0.9em; padding: 8px 12px;"
-            >
-              ?? Prestige
-            </button>
-          </div>
-
-          <button
-            class="btn"
-            onclick="adminAddSpecials('${player.id}')"
-            style="background: #9b59b6; font-size: 0.9em; padding: 8px 12px;"
-          >
-            ? Specials
-          </button>
-
-          <button
-            class="btn"
-            onclick="adminForceLegendaryEvent('${player.id}')"
-            style="background: #f1c40f; font-size: 0.9em; padding: 8px 12px;"
-          >
-            ?? Legendary
-          </button>
-
-          <button
-            class="btn"
-            onclick="adminResetStreak('${player.id}')"
-            style="background: #d35400; font-size: 0.9em; padding: 8px 12px;"
-          >
-            ?? Reset Streak
-          </button>
-
-          <button
-            class="btn"
-            onclick="adminForceHarvest('${player.id}')"
-            style="background: #2ecc71; font-size: 0.9em; padding: 8px 12px;"
-          >
-            ?? Harvest
-          </button>
-
-          <button
-            class="btn danger"
-            onclick="if (confirm('Reset complet de ce joueur?')) adminResetSave('${player.id}')"
-            style="font-size: 0.9em; padding: 8px 12px;"
-          >
-            ?? Reset Save
-          </button>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 16px;">
+        <div style="display: flex; gap: 6px;">
+          <input
+            type="number"
+            id="admin-coins-amount"
+            placeholder="Montant (+ ou -)"
+            value="1000"
+            style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #2ecc71;"
+          />
+          <button class="btn" onclick="adminAdjustCoins('${target?.id}', getNumberInputValue('admin-coins-amount', 0))" style="background:#2ecc71;">+/-</button>
+          <button class="btn" onclick="adminSetCoins('${target?.id}', getNumberInputValue('admin-coins-amount', 0))" style="background:#27ae60;">=</button>
         </div>
-      ` : ''}
+
+        <div style="display: flex; gap: 6px;">
+          <select id="admin-weather" style="flex:1; padding: 8px; border-radius: 6px; border: 2px solid #3498db;">
+            ${weatherOptions}
+          </select>
+          <button class="btn" onclick="adminChangeWeather('${target?.id}', getSelectValue('admin-weather', 'sun'))" style="background:#3498db;">???</button>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+          <select id="admin-season" style="flex:1; padding: 8px; border-radius: 6px; border: 2px solid #9b59b6;">
+            ${seasonOptions}
+          </select>
+          <button class="btn" onclick="adminChangeSeason('${target?.id}', getSelectValue('admin-season', 'spring'))" style="background:#9b59b6;">??</button>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+          <button class="btn" onclick="adminForceNight('${target?.id}')" style="background:#2c3e50; color:#fff;">?? Nuit</button>
+          <button class="btn" onclick="adminForceDay('${target?.id}')" style="background:#f39c12;">?? Jour</button>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+          <select id="admin-pest" style="flex:1; padding: 8px; border-radius: 6px; border: 2px solid #e74c3c;">
+            ${pestOptions}
+          </select>
+          <button class="btn" onclick="adminPestInfect('${target?.id}', getSelectValue('admin-pest'))" style="background:#e74c3c;">??</button>
+          <button class="btn" onclick="adminPestClear('${target?.id}')" style="background:#c0392b;">Clean</button>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+          <select id="admin-seed-plant" style="flex:1; padding: 8px; border-radius: 6px; border: 2px solid #16a085;">
+            ${plantOptions}
+          </select>
+          <input type="number" id="admin-seed-amount" value="5" style="width:80px; padding:8px; border-radius:6px; border:2px solid #16a085;" />
+          <button class="btn" onclick="adminSendSeeds('${target?.id}', getSelectValue('admin-seed-plant'), getNumberInputValue('admin-seed-amount', 1))" style="background:#16a085;">??</button>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+          <input type="number" id="admin-seed-all" value="3" style="flex:1; padding:8px; border-radius:6px; border:2px solid #1abc9c;" />
+          <button class="btn" onclick="adminSendSeedsAll('${target?.id}', getNumberInputValue('admin-seed-all', 1))" style="background:#1abc9c;">?? All</button>
+          <button class="btn danger" onclick="adminClearSeeds('${target?.id}')">Clear</button>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+          <select id="admin-harvest-plant" style="flex:1; padding: 8px; border-radius: 6px; border: 2px solid #f39c12;">
+            ${plantOptions}
+          </select>
+          <input type="number" id="admin-harvest-amount" value="3" style="width:80px; padding:8px; border-radius:6px; border:2px solid #f39c12;" />
+          <button class="btn" onclick="adminAddHarvest('${target?.id}', getSelectValue('admin-harvest-plant'), getNumberInputValue('admin-harvest-amount', 1))" style="background:#f39c12;">??</button>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+          <select id="admin-building" style="flex:1; padding: 8px; border-radius: 6px; border: 2px solid #8e44ad;">
+            ${buildingOptions}
+          </select>
+          <input type="number" id="admin-building-amount" value="1" style="width:80px; padding:8px; border-radius:6px; border:2px solid #8e44ad;" />
+          <button class="btn" onclick="adminAddBuilding('${target?.id}', getSelectValue('admin-building'), getNumberInputValue('admin-building-amount', 1))" style="background:#8e44ad;">???</button>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+          <input type="number" id="admin-prestige" value="0" style="flex:1; padding:8px; border-radius:6px; border:2px solid #c0392b;" />
+          <button class="btn" onclick="adminSetPrestigeLevel('${target?.id}', getNumberInputValue('admin-prestige', 0))" style="background:#c0392b;">?? Prestige</button>
+        </div>
+
+        <button class="btn" onclick="adminAddSpecials('${target?.id}')" style="background:#9b59b6;">? Specials</button>
+        <button class="btn" onclick="adminForceLegendaryEvent('${target?.id}')" style="background:#f1c40f;">?? Legendary</button>
+        <button class="btn" onclick="adminResetStreak('${target?.id}')" style="background:#d35400;">?? Reset Streak</button>
+        <button class="btn" onclick="adminForceHarvest('${target?.id}')" style="background:#2ecc71;">?? Harvest</button>
+
+        <button class="btn danger" onclick="adminKickPlayer('${target?.id}')" ${isSelf ? 'disabled' : ''}>?? Kick</button>
+        <button class="btn danger" onclick="adminBanPlayer('${target?.id}')" ${isSelf ? 'disabled' : ''}>? Ban</button>
+        <button class="btn" onclick="adminUnbanAll()" style="background:#16a085;">? Unban</button>
+        <button class="btn danger" onclick="if (confirm('Reset complet du joueur?')) adminResetSave('${target?.id}')">?? Reset Save</button>
+      </div>
     </div>
   `;
-  }).join('');
 }
 
 function sendBroadcast() {
@@ -1119,6 +1195,13 @@ window.adminChangeWeather = adminChangeWeather;
 window.adminChangeSeason = adminChangeSeason;
 window.adminBroadcast = adminBroadcast;
 window.adminKickPlayer = adminKickPlayer;
+window.adminForceNight = adminForceNight;
+window.adminForceDay = adminForceDay;
+window.adminPestInfect = adminPestInfect;
+window.adminPestClear = adminPestClear;
+window.adminBanPlayer = adminBanPlayer;
+window.adminUnbanAll = adminUnbanAll;
+window.setAdminTarget = setAdminTarget;
 window.closeAdminMultiplayerPanel = closeAdminMultiplayerPanel;
 window.sendBroadcast = sendBroadcast;
 
