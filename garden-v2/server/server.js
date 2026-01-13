@@ -87,6 +87,7 @@ io.on("connection", (socket) => {
       season: "spring",
       weather: "sun"
     });
+    emitPlayersList();
   }
 
   socket.on("player-update", (data = {}) => {
@@ -103,7 +104,9 @@ io.on("connection", (socket) => {
     admins.add(socket.id);
     socket.emit("admin-authenticated");
     emitPlayersList();
-  });  socket.on("admin-request-players", () => {
+  });
+
+  socket.on("admin-request-players", () => {
     if (!admins.has(socket.id)) {
       socket.emit("admin-error", "Admin access required");
       return;
