@@ -2,12 +2,18 @@ const http = require("http");
 require("dotenv").config();
 
 const express = require("express");
+const path = require("path");
 const { Server } = require("socket.io");
 
 const PORT = Number(process.env.PORT) || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "1234";
 
 const app = express();
+const clientRoot = path.join(__dirname, "..");
+app.use(express.static(clientRoot));
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(clientRoot, "index.html"));
+});
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {

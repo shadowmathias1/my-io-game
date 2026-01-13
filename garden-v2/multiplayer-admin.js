@@ -6,7 +6,7 @@
 // Configuration - À MODIFIER avec ton serveur
 const SERVER_CONFIG = {
   enabled: true, // Activer le multiplayer
-  serverUrl: 'https://my-io-game-49sd.onrender.com', // URL du serveur
+  serverUrl: window.location.origin, // URL du serveur
   adminPassword: '1234' // Mot de passe admin (temporaire)
 };
 
