@@ -25,6 +25,9 @@ const multiplayerState = {
 // ============================================
 
 function initMultiplayer() {
+  if (multiplayerState.socket) {
+    return;
+  }
   if (!SERVER_CONFIG.enabled) {
     console.log('⚠️ Multiplayer désactivé');
     return;

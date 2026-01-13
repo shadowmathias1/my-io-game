@@ -578,7 +578,7 @@ const SEASONAL_EVENTS = {
 
 const MARKET_REFRESH_INTERVAL = 15 * 60 * 1000; // 15 minutes
 const OFFLINE_MAX_SECONDS = 3600 * 24; // 24h max d'absence prise en compte
-const ADMIN_CODE = '4123';
+const ADMIN_CODE = '1234';
 const ADMIN_UNLOCK_KEY = 'garden_admin_unlocked_v2';
 
 const WEEKLY_REFRESH_INTERVAL = 7 * 24 * 60 * 60 * 1000;
