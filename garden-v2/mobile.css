@@ -1,0 +1,641 @@
+/* ============================================
+   VERSION MOBILE OPTIMISÉE - GARDEN GAME
+   ============================================ */
+
+/* Tablette - 992px à 1200px */
+@media (max-width: 1200px) {
+  main {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stats-section {
+    grid-column: span 2;
+  }
+
+  #daily-calendar {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  #app {
+    padding: 15px;
+  }
+
+  main {
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  section {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2.2em;
+  }
+
+  .shop-content {
+    max-height: 500px;
+  }
+}
+
+/* Mobile - Interface tactile optimisée */
+@media (max-width: 768px) {
+  /* Réinitialiser le padding et les marges pour mobile */
+  #app {
+    padding: 10px;
+    max-width: 100%;
+  }
+
+  body {
+    font-size: 16px; /* Empêche le zoom automatique sur iOS */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Header mobile optimisé */
+  header {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+  }
+
+  .header-left {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo {
+    width: 50px;
+    height: 50px;
+    font-size: 1.6em;
+  }
+
+  h1 {
+    font-size: 1.8em;
+  }
+
+  /* Boutons header plus grands pour le tactile (48px minimum recommandé) */
+  .header-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .icon-btn {
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 1.2em !important;
+  }
+
+  .header-center {
+    width: 100%;
+  }
+
+  .season-indicator {
+    min-width: 0;
+    width: 100%;
+    justify-content: center;
+    padding: 14px 20px;
+    font-size: 0.9em;
+  }
+
+  .season-icon {
+    font-size: 1.2em;
+  }
+
+  .season-name {
+    font-size: 1.1em;
+  }
+
+  .season-timer {
+    font-size: 0.9em;
+  }
+
+  .weather-panel {
+    width: 100%;
+    padding: 8px 14px;
+    font-size: 0.85em;
+  }
+
+  /* Player info mobile */
+  .player-info {
+    width: 100%;
+    text-align: center;
+    padding: 12px 20px;
+  }
+
+  .player-info .coins-display {
+    font-size: 1.6em !important;
+    justify-content: center;
+  }
+
+  .player-info .cps-display {
+    font-size: 0.85em;
+  }
+
+  /* Layout une colonne sur mobile */
+  main {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+    margin-bottom: 15px;
+  }
+
+  section {
+    padding: 15px;
+  }
+
+  h2 {
+    font-size: 1.3em;
+    margin-bottom: 12px;
+  }
+
+  /* Tabs mobile scrollable horizontalement */
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px;
+    padding: 4px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    flex: 0 0 auto;
+    padding: 10px 14px;
+    font-size: 0.9em;
+    white-space: nowrap;
+    min-width: 100px;
+  }
+
+  /* Shop mobile optimisé */
+  .shop-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .shop-content {
+    max-height: 500px;
+  }
+
+  .shop-item {
+    padding: 12px !important;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .shop-item-buy {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .buy-plant-btn,
+  .buy-building-btn {
+    padding: 10px 18px;
+    font-size: 0.95em;
+    min-width: 110px;
+    flex: 0 0 auto;
+  }
+
+  /* Garden mobile - Zones tactiles agrandies */
+  .garden {
+    gap: 6px !important;
+    padding: 8px !important;
+  }
+
+  .plot {
+    font-size: 0.6em !important;
+    border-width: 2px !important;
+    min-height: 60px;
+    border-radius: 10px;
+  }
+
+  .plot-icon {
+    font-size: 1.3em !important;
+  }
+
+  .plot-icon-large {
+    font-size: 1.5em !important;
+  }
+
+  .plot-name {
+    font-size: 0.75em;
+  }
+
+  .plot-timer {
+    font-size: 0.7em;
+  }
+
+  /* Boutons plus grands pour mobile (48px min) */
+  .btn {
+    padding: 14px 20px !important;
+    font-size: 1em !important;
+    min-height: 48px;
+  }
+
+  #harvest-all {
+    font-size: 1em !important;
+    padding: 16px !important;
+  }
+
+  /* Stats mobile */
+  #stats {
+    font-size: 0.9em;
+  }
+
+  #stats > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Footer mobile */
+  footer {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+  }
+
+  footer .btn {
+    width: 100%;
+  }
+
+  /* Modales mobile */
+  .modal-content {
+    width: 95% !important;
+    max-width: 95% !important;
+    border-radius: 15px;
+  }
+
+  .modal-header {
+    padding: 15px 20px;
+  }
+
+  .modal-header h2 {
+    font-size: 1.3em;
+  }
+
+  .modal-body {
+    padding: 20px;
+    max-height: 65vh;
+  }
+
+  .modal-footer {
+    padding: 15px 20px;
+  }
+
+  /* Daily calendar mobile - 3 colonnes */
+  #daily-calendar-modal .modal-content {
+    max-width: 95% !important;
+  }
+
+  #daily-calendar {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px;
+  }
+
+  .calendar-day {
+    padding: 12px 8px;
+    font-size: 0.8em;
+  }
+
+  .calendar-day-number {
+    font-size: 1.1em;
+  }
+
+  .calendar-day-icon {
+    font-size: 1.6em;
+  }
+
+  /* Toasts mobile - Pleine largeur */
+  #toasts {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    width: calc(100% - 20px);
+  }
+
+  .toast {
+    min-width: auto;
+    padding: 12px 15px;
+    font-size: 0.9em;
+  }
+
+  /* Admin panel mobile */
+  .admin-panel {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: calc(100% - 20px);
+  }
+
+  /* Weekly offer mobile */
+  .weekly-card {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Collection mobile */
+  .collection-summary {
+    gap: 6px;
+  }
+
+  .collection-summary .pill {
+    font-size: 0.8em;
+    padding: 5px 8px;
+  }
+
+  /* Achievements mobile */
+  .achievement-item {
+    padding: 12px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .achievement-icon {
+    font-size: 2em;
+    width: 50px;
+    height: 50px;
+  }
+
+  .achievement-reward {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+
+  /* Building inventory mobile */
+  .building-list {
+    gap: 6px;
+  }
+
+  .building-item {
+    font-size: 0.8em;
+    padding: 10px 12px;
+  }
+
+  /* Special plants inventory mobile */
+  #special-plants-inventory {
+    gap: 6px;
+  }
+
+  .special-plant-item {
+    padding: 10px 12px;
+    font-size: 0.85em;
+  }
+
+  /* Reward modals mobile */
+  .daily-reward-content {
+    padding: 30px 20px !important;
+    max-width: 90%;
+  }
+
+  .daily-reward-icon {
+    font-size: 4em !important;
+  }
+
+  .daily-reward-title {
+    font-size: 1.4em !important;
+  }
+
+  .reward-item {
+    font-size: 1em;
+    padding: 12px;
+  }
+
+  .special-reward {
+    padding: 20px;
+  }
+
+  /* Legendary event mobile */
+  .legendary-event-content {
+    padding: 30px 20px !important;
+    width: 92% !important;
+  }
+
+  .legendary-event-icon {
+    font-size: 4em !important;
+  }
+
+  .legendary-event-content h2 {
+    font-size: 1.5em !important;
+  }
+
+  .legendary-plant-showcase {
+    padding: 20px;
+  }
+
+  .legendary-stats {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Season change mobile */
+  .season-change-content {
+    padding: 30px 20px !important;
+    max-width: 90%;
+  }
+
+  .season-change-icon {
+    font-size: 4em !important;
+  }
+
+  /* Settings modal mobile */
+  .settings-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .settings-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* Très petit mobile (iPhone SE, petits Android) */
+@media (max-width: 375px) {
+  h1 {
+    font-size: 1.5em !important;
+  }
+
+  h2 {
+    font-size: 1.1em !important;
+  }
+
+  .logo {
+    width: 45px !important;
+    height: 45px !important;
+    font-size: 1.4em !important;
+  }
+
+  .icon-btn {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 1.1em !important;
+  }
+
+  .player-info .coins-display {
+    font-size: 1.4em !important;
+  }
+
+  section {
+    padding: 12px !important;
+  }
+
+  .plot {
+    font-size: 0.55em !important;
+    min-height: 55px !important;
+  }
+
+  .tab {
+    padding: 8px 10px !important;
+    font-size: 0.85em !important;
+    min-width: 90px !important;
+  }
+
+  #daily-calendar {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .calendar-day-icon {
+    font-size: 1.4em !important;
+  }
+
+  .daily-reward-icon {
+    font-size: 3.5em !important;
+  }
+
+  .modal-body {
+    max-height: 60vh !important;
+  }
+}
+
+/* Optimisations tactiles - Détection d'appareil tactile */
+@media (hover: none) and (pointer: coarse) {
+  /* Améliorer le feedback tactile */
+  button, .btn, .tab, .icon-btn, .plot, .shop-item, .calendar-day {
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(46, 204, 113, 0.2);
+  }
+
+  /* Désactiver les effets hover sur tactile */
+  .plot:hover,
+  .shop-item:hover,
+  .btn:hover,
+  section:hover {
+    transform: none !important;
+    box-shadow: inherit !important;
+  }
+
+  /* Feedback tactile avec :active */
+  .plot:active {
+    transform: scale(0.95) !important;
+    opacity: 0.8;
+  }
+
+  .btn:active:not(:disabled) {
+    transform: scale(0.98) !important;
+  }
+
+  .tab:active {
+    background: rgba(255,255,255,0.7) !important;
+  }
+
+  .shop-item:active {
+    transform: translateX(0) !important;
+  }
+
+  /* Optimisation performance mobile - Réduire animations */
+  * {
+    animation-duration: 0.3s !important;
+    transition-duration: 0.2s !important;
+  }
+
+  .plot.growing,
+  .plot.ready,
+  .automation-indicator {
+    animation: none !important;
+  }
+}
+
+/* Mode paysage mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  header {
+    padding: 15px;
+    gap: 10px;
+  }
+
+  .logo {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 1.4em !important;
+  }
+
+  h1 {
+    font-size: 1.5em !important;
+  }
+
+  .modal-content {
+    max-height: 85vh !important;
+  }
+
+  .modal-body {
+    max-height: 55vh !important;
+  }
+
+  #daily-calendar {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+/* Amélioration de la lisibilité sur mobile */
+@media (max-width: 768px) {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Empêcher le zoom sur les inputs (iOS) */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Améliorer la zone de scroll */
+  .shop-content,
+  .modal-body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Zones de clic plus larges */
+  .icon-btn,
+  .tab,
+  .calendar-day,
+  .plot {
+    position: relative;
+  }
+
+  .icon-btn::before,
+  .tab::before,
+  .calendar-day::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    z-index: -1;
+  }
+}

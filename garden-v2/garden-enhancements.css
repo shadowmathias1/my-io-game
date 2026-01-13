@@ -1,0 +1,383 @@
+/* ============================================
+   GARDEN VISUAL ENHANCEMENTS
+   Améliorations visuelles avancées pour le jardin
+   ============================================ */
+
+/* ============================================
+   ENHANCED PLOT ANIMATIONS
+   ============================================ */
+
+/* Croissance progressive avec scale */
+.plot.growing .plot-icon {
+  animation: plant-grow 3s ease-in-out infinite;
+}
+
+@keyframes plant-grow {
+  0% { transform: scale(0.9) translateY(2px); }
+  50% { transform: scale(1) translateY(0); }
+  100% { transform: scale(0.9) translateY(2px); }
+}
+
+/* Effet de brillance sur plantes prêtes */
+.plot.ready::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  animation: shimmer 3s infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+/* Particules flottantes sur hover */
+.plot:hover::before {
+  animation: float-particle 2s ease-in-out infinite;
+}
+
+@keyframes float-particle {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+    opacity: 0.4;
+  }
+}
+
+/* ============================================
+   BUILDING VISUAL ENHANCEMENTS
+   ============================================ */
+
+/* Zone d'effet visible pour les buildings */
+.plot.has-building {
+  position: relative;
+  overflow: visible;
+}
+
+.plot.has-building::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%;
+  height: 300%;
+  transform: translate(-50%, -50%);
+  border: 2px dashed rgba(52, 152, 219, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: radius-pulse 3s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes radius-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+/* Différentes couleurs selon le type de building */
+.plot.has-building[data-building-type="defensive"]::after {
+  border-color: rgba(231, 76, 60, 0.4);
+}
+
+.plot.has-building[data-building-type="productivity"]::after {
+  border-color: rgba(46, 204, 113, 0.4);
+}
+
+.plot.has-building[data-building-type="magical"]::after {
+  border-color: rgba(155, 89, 182, 0.4);
+}
+
+/* Icône du building avec rotation douce */
+.plot.has-building .plot-icon {
+  animation: building-float 4s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+@keyframes building-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-5px) rotate(2deg); }
+}
+
+/* ============================================
+   GARDEN GRID IMPROVEMENTS
+   ============================================ */
+
+/* Effet de grille avec fond amélioré */
+.garden {
+  position: relative;
+  background:
+    linear-gradient(rgba(46, 204, 113, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46, 204, 113, 0.03) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(46, 204, 113, 0.05), rgba(39, 174, 96, 0.05));
+  background-size: 20px 20px, 20px 20px, 100% 100%;
+}
+
+/* Indicateur de saison sur le jardin */
+.garden[data-season="spring"] {
+  border-color: rgba(46, 204, 113, 0.4);
+  background-blend-mode: overlay;
+}
+
+.garden[data-season="summer"] {
+  border-color: rgba(243, 156, 18, 0.4);
+}
+
+.garden[data-season="autumn"] {
+  border-color: rgba(230, 126, 34, 0.4);
+}
+
+.garden[data-season="winter"] {
+  border-color: rgba(52, 152, 219, 0.4);
+}
+
+/* ============================================
+   ENHANCED PROGRESS BARS
+   ============================================ */
+
+.progress-bar {
+  position: absolute;
+  bottom: 3px;
+  left: 3px;
+  right: 3px;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-green), var(--gold));
+  border-radius: 10px;
+  transition: width 0.5s ease;
+  position: relative;
+  animation: progress-shine 2s ease-in-out infinite;
+}
+
+@keyframes progress-shine {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.2); }
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: progress-move 2s linear infinite;
+}
+
+@keyframes progress-move {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* ============================================
+   RARITY VISUAL EFFECTS
+   ============================================ */
+
+/* Aura pour plantes rares */
+.plot[data-rarity="rare"] {
+  box-shadow: 0 0 20px rgba(52, 152, 219, 0.4), inset 0 0 10px rgba(52, 152, 219, 0.1);
+}
+
+.plot[data-rarity="epic"] {
+  box-shadow: 0 0 20px rgba(155, 89, 182, 0.5), inset 0 0 10px rgba(155, 89, 182, 0.2);
+  animation: epic-glow 2s ease-in-out infinite;
+}
+
+@keyframes epic-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(155, 89, 182, 0.5); }
+  50% { box-shadow: 0 0 30px rgba(155, 89, 182, 0.8); }
+}
+
+.plot[data-rarity="legendary"] {
+  box-shadow: 0 0 25px rgba(243, 156, 18, 0.6), inset 0 0 15px rgba(243, 156, 18, 0.2);
+  animation: legendary-pulse 1.5s ease-in-out infinite;
+  position: relative;
+}
+
+@keyframes legendary-pulse {
+  0%, 100% {
+    box-shadow: 0 0 25px rgba(243, 156, 18, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(243, 156, 18, 0.9);
+    transform: scale(1.02);
+  }
+}
+
+/* Particules tournantes pour légendaires */
+.plot[data-rarity="legendary"]::before {
+  content: '✨';
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 0.6em;
+  animation: sparkle-rotate 4s linear infinite;
+  opacity: 1;
+}
+
+@keyframes sparkle-rotate {
+  0% { transform: rotate(0deg) translateX(15px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(15px) rotate(-360deg); }
+}
+
+/* ============================================
+   WEATHER EFFECTS ON PLOTS
+   ============================================ */
+
+/* Effet de pluie sur les parcelles */
+.garden[data-weather="rainy"] .plot.growing {
+  animation: growing 2s ease-in-out infinite, rain-drops 1s linear infinite;
+}
+
+@keyframes rain-drops {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.1); }
+}
+
+/* Effet de soleil */
+.garden[data-weather="sunny"] .plot.growing {
+  filter: brightness(1.05);
+}
+
+/* Effet d'orage avec éclairs */
+.garden[data-weather="stormy"] .plot {
+  animation: storm-flash 3s ease-in-out infinite;
+}
+
+@keyframes storm-flash {
+  0%, 90%, 100% { filter: brightness(1); }
+  93%, 97% { filter: brightness(1.3); }
+}
+
+/* ============================================
+   PEST INDICATORS ENHANCED
+   ============================================ */
+
+.pest-indicator {
+  animation: pest-wiggle 1s ease-in-out infinite;
+  z-index: 10;
+}
+
+@keyframes pest-wiggle {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-2px) rotate(-5deg); }
+  75% { transform: translateX(2px) rotate(5deg); }
+}
+
+/* ============================================
+   UNLOCKED PLOT ANIMATION
+   ============================================ */
+
+.plot.unlocking {
+  animation: unlock-expand 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes unlock-expand {
+  0% {
+    transform: scale(0) rotate(180deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15) rotate(-10deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   HOVER EFFECTS ENHANCED
+   ============================================ */
+
+.plot:hover .plot-icon {
+  transform: scale(1.1);
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.plot:hover .plot-name {
+  color: var(--primary-green);
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   MOBILE OPTIMIZATIONS
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Réduire les effets sur mobile pour performances */
+  .plot.has-building::after {
+    display: none;
+  }
+
+  .plot.ready::after {
+    animation-duration: 5s;
+  }
+
+  .progress-fill::after {
+    display: none;
+  }
+}
+
+/* ============================================
+   DARK THEME SUPPORT
+   ============================================ */
+
+body[data-theme="dark"] .garden {
+  background:
+    linear-gradient(rgba(46, 204, 113, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46, 204, 113, 0.05) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(25, 32, 48, 0.8), rgba(19, 25, 38, 0.9));
+  background-size: 20px 20px, 20px 20px, 100% 100%;
+  border-color: rgba(46, 204, 113, 0.2);
+}
+
+body[data-theme="dark"] .plot {
+  background: linear-gradient(135deg, #1c2334, #242c40);
+  border-color: #2a3246;
+}
+
+body[data-theme="dark"] .plot.growing {
+  background: linear-gradient(135deg, #2a3246, #323a52);
+}
+
+body[data-theme="dark"] .plot.ready {
+  background: linear-gradient(135deg, #1f7a53, #1b5f46);
+}
+
+body[data-theme="dark"] .progress-bar {
+  background: rgba(255, 255, 255, 0.1);
+}

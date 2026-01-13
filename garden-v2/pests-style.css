@@ -1,0 +1,557 @@
+/* ============================================
+   PESTS & DISEASES STYLES
+   ============================================ */
+
+/* Pests Modal */
+#pests-modal .modal-content {
+  max-width: 900px;
+}
+
+.protection-active {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(39, 174, 96, 0.2));
+  border: 2px solid var(--primary-green);
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 1.1em;
+  font-weight: 700;
+  color: var(--dark-green);
+  margin-bottom: 20px;
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(46, 204, 113, 0.6);
+  }
+}
+
+.pests-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.pest-stat {
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,249,250,0.9));
+  border: 2px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+}
+
+.pest-stat-label {
+  font-size: 0.85em;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+
+.pest-stat-value {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--primary-green);
+}
+
+.pest-stat-value.infected {
+  color: #e74c3c;
+}
+
+.pests-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--primary-green);
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.infected-plants-list h4 {
+  font-size: 1em;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 15px;
+}
+
+.infected-plants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.infected-plant-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,249,250,0.9));
+  border: 3px solid #e74c3c;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  transition: all 0.3s ease;
+  animation: infected-pulse 2s infinite;
+}
+
+@keyframes infected-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(231, 76, 60, 0.6);
+  }
+}
+
+.infected-plant-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+.infected-plant-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.infected-plant-icon {
+  font-size: 2em;
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+}
+
+.infected-pest {
+  font-size: 1.5em;
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+}
+
+.infected-plant-name {
+  font-size: 0.9em;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 3px;
+}
+
+.infected-pest-name {
+  font-size: 0.85em;
+  font-weight: 600;
+  color: #e74c3c;
+  margin-bottom: 5px;
+}
+
+.infected-time {
+  font-size: 0.75em;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+
+.infected-effects {
+  font-size: 0.75em;
+  color: var(--text-light);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.treat-plant-btn {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+}
+
+.treat-plant-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+/* Treatments List */
+.treatments-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.treatment-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,249,250,0.9));
+  border: 2px solid rgba(0,0,0,0.1);
+  border-radius: 16px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.treatment-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(52, 152, 219, 0.2);
+  border-color: #3498db;
+}
+
+.treatment-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.treatment-icon {
+  font-size: 2em;
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+}
+
+.treatment-info {
+  flex: 1;
+}
+
+.treatment-info h4 {
+  font-size: 1em;
+  font-weight: 700;
+  margin-bottom: 3px;
+  color: var(--text-dark);
+}
+
+.treatment-cost {
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+.treatment-cost.affordable {
+  color: var(--primary-green);
+}
+
+.treatment-cost.expensive {
+  color: #e74c3c;
+}
+
+.treatment-description {
+  font-size: 0.85em;
+  color: var(--text-light);
+  margin-bottom: 10px;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.treatment-stats {
+  background: rgba(0,0,0,0.03);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.treatment-stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85em;
+  margin-bottom: 5px;
+  color: var(--text-dark);
+}
+
+.treatment-stat:last-child {
+  margin-bottom: 0;
+}
+
+.treatment-stat span {
+  color: var(--text-light);
+}
+
+.treatment-stat strong {
+  color: var(--primary-green);
+  font-weight: 700;
+}
+
+.treatment-effective {
+  font-size: 0.8em;
+  color: var(--text-light);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.treatment-use-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+}
+
+.treatment-use-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+}
+
+.treatment-use-btn:disabled,
+.treatment-use-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #95a5a6;
+}
+
+/* Pest Indicators on Garden Plots */
+.pest-indicator {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 1.2em;
+  padding: 3px 6px;
+  border-radius: 50%;
+  background: rgba(231, 76, 60, 0.9);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  animation: pest-bounce 1s infinite;
+  z-index: 10;
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+}
+
+@keyframes pest-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.plot.treatable {
+  border: 3px solid #3498db !important;
+  box-shadow: 0 0 15px rgba(52, 152, 219, 0.6) !important;
+  cursor: pointer !important;
+}
+
+/* Pests Status Display (Header) */
+.pests-status-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 2px solid;
+}
+
+.pests-status-display.infected {
+  background: rgba(231, 76, 60, 0.1);
+  border-color: rgba(231, 76, 60, 0.3);
+}
+
+.pests-status-display.protected {
+  background: rgba(46, 204, 113, 0.1);
+  border-color: rgba(46, 204, 113, 0.3);
+}
+
+.pests-status-icon {
+  font-size: 1.2em;
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+}
+
+.pests-status-text {
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+.pests-status-display.infected .pests-status-text {
+  color: #c0392b;
+}
+
+.pests-status-display.protected .pests-status-text {
+  color: var(--dark-green);
+}
+
+/* Treatment Selection Modal */
+.treatment-selection-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.treatment-selection-modal.show {
+  opacity: 1;
+}
+
+.treatment-selection-content {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.treatment-selection-modal.show .treatment-selection-content {
+  transform: scale(1);
+}
+
+.treatment-selection-content h3 {
+  font-size: 1.2em;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text-dark);
+}
+
+.treatment-selection-content p {
+  font-size: 0.9em;
+  color: var(--text-light);
+  margin-bottom: 20px;
+}
+
+.treatment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.treatment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 2px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,249,250,0.9));
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.treatment-option:hover:not(:disabled) {
+  border-color: #3498db;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+  transform: translateY(-2px);
+}
+
+.treatment-option:disabled,
+.treatment-option.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.treatment-option-icon {
+  font-size: 2em;
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+}
+
+.treatment-option-info {
+  flex: 1;
+  text-align: left;
+}
+
+.treatment-option-name {
+  font-size: 0.95em;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 2px;
+}
+
+.treatment-option-cost {
+  font-size: 0.85em;
+  color: var(--text-light);
+}
+
+.treatment-cancel-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+  background: #95a5a6;
+  color: white;
+}
+
+.treatment-cancel-btn:hover {
+  background: #7f8c8d;
+  transform: translateY(-2px);
+}
+
+/* Dark theme support */
+body[data-theme="dark"] .pest-stat,
+body[data-theme="dark"] .infected-plant-card,
+body[data-theme="dark"] .treatment-card {
+  background: linear-gradient(135deg, rgba(25, 32, 48, 0.95), rgba(19, 25, 38, 0.95));
+  border-color: rgba(255,255,255,0.08);
+}
+
+body[data-theme="dark"] .treatment-selection-content {
+  background: #1b2336;
+  color: #e6edf5;
+}
+
+body[data-theme="dark"] .treatment-option {
+  background: linear-gradient(135deg, rgba(25, 32, 48, 0.95), rgba(19, 25, 38, 0.95));
+  border-color: rgba(255,255,255,0.08);
+}
+
+body[data-theme="dark"] .treatment-stats {
+  background: rgba(255,255,255,0.03);
+}
+
+body[data-theme="dark"] .pests-status-display.protected {
+  background: rgba(46, 204, 113, 0.15);
+}
+
+/* Scrollbar */
+.infected-plants-grid::-webkit-scrollbar,
+.treatments-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.infected-plants-grid::-webkit-scrollbar-track,
+.treatments-list::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.05);
+  border-radius: 10px;
+}
+
+.infected-plants-grid::-webkit-scrollbar-thumb,
+.treatments-list::-webkit-scrollbar-thumb {
+  background: var(--primary-green);
+  border-radius: 10px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .pests-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .infected-plants-grid,
+  .treatments-list {
+    grid-template-columns: 1fr;
+    max-height: 350px;
+  }
+
+  .treatment-selection-content {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .pest-indicator {
+    font-size: 1em;
+    padding: 2px 5px;
+  }
+}

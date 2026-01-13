@@ -1,0 +1,1122 @@
+/* ============================================
+   MULTIPLAYER ADMIN SYSTEM (CLIENT SIDE)
+   Système d'administration multiplayer côté client
+   ============================================ */
+
+// Configuration - À MODIFIER avec ton serveur
+const SERVER_CONFIG = {
+  enabled: true, // Activer le multiplayer
+  serverUrl: 'http://localhost:3000', // URL du serveur
+  adminPassword: '1234' // Mot de passe admin (temporaire)
+};
+
+// État multiplayer
+const multiplayerState = {
+  connected: false,
+  socket: null,
+  isAdmin: false,
+  playerId: null,
+  players: [],
+  adminMode: false
+};
+
+// ============================================
+// CONNECTION AU SERVEUR
+// ============================================
+
+function initMultiplayer() {
+  if (!SERVER_CONFIG.enabled) {
+    console.log('⚠️ Multiplayer désactivé');
+    return;
+  }
+
+  // Vérifier si Socket.IO est disponible
+  if (typeof io === 'undefined') {
+    console.error('❌ Socket.IO non disponible. Incluez <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>');
+    return;
+  }
+
+  // Se connecter au serveur
+  multiplayerState.socket = io(SERVER_CONFIG.serverUrl);
+
+  multiplayerState.socket.on('connect', () => {
+    console.log('✅ Connecté au serveur multiplayer');
+    multiplayerState.connected = true;
+    multiplayerState.playerId = multiplayerState.socket.id;
+
+    // Envoyer l'état initial
+    sendPlayerUpdate();
+
+    if (typeof showToast === 'function') {
+      showToast('🌐 Connecté au serveur', 'success');
+    }
+  });
+
+  multiplayerState.socket.on('disconnect', () => {
+    console.log('❌ Déconnecté du serveur');
+    multiplayerState.connected = false;
+
+    if (typeof showToast === 'function') {
+      showToast('🌐 Déconnecté du serveur', 'warning');
+    }
+  });
+
+  // Recevoir la liste des joueurs
+  multiplayerState.socket.on('players-list', (players) => {
+    multiplayerState.players = players;
+    if (multiplayerState.isAdmin) {
+      renderAdminPlayersList();
+    }
+  });
+
+  // Recevoir des cadeaux d'admin
+  multiplayerState.socket.on('admin-gift', (data) => {
+    handleAdminGift(data);
+  });
+
+  // Confirmation d'admin
+  multiplayerState.socket.on('admin-authenticated', () => {
+    multiplayerState.isAdmin = true;
+    if (typeof showToast === 'function') {
+      showToast('👑 Mode Admin activé', 'success');
+    }
+    openAdminMultiplayerPanel();
+  });
+
+  // Erreur d'authentification
+  multiplayerState.socket.on('admin-error', (message) => {
+    if (typeof showToast === 'function') {
+      showToast(`❌ ${message}`, 'error');
+    }
+  });
+}
+
+// Envoyer une mise à jour du joueur
+function getSeasonIdFromState() {
+  if (typeof state === 'undefined' || !state.season) return 'spring';
+  const current = state.season.current;
+  if (typeof current === 'number' && typeof SEASONS !== 'undefined' && Array.isArray(SEASONS)) {
+    const entry = SEASONS[current];
+    if (entry && entry.id) return entry.id;
+  }
+  if (typeof current === 'string') return current;
+  return 'spring';
+}
+
+function getWeatherIdFromState() {
+  if (typeof state === 'undefined' || !state.weather) return 'sun';
+  const current = state.weather.current;
+  if (typeof current === 'string') return current;
+  if (current && typeof current.id === 'string') return current.id;
+  return 'sun';
+}
+
+function getSeasonLabel(id) {
+  if (typeof SEASONS !== 'undefined' && Array.isArray(SEASONS)) {
+    const entry = SEASONS.find((season) => season.id === id);
+    if (entry && entry.name) return entry.name;
+  }
+  return id || 'spring';
+}
+
+function getWeatherLabel(id) {
+  if (typeof WEATHER_TYPES !== 'undefined' && Array.isArray(WEATHER_TYPES)) {
+    const entry = WEATHER_TYPES.find((weather) => weather.id === id);
+    if (entry && entry.name) return entry.name;
+  }
+  return id || 'sun';
+}
+
+function buildSeasonOptions(selectedId) {
+  if (typeof SEASONS !== 'undefined' && Array.isArray(SEASONS)) {
+    return SEASONS.map((season) => {
+      const id = season.id || 'spring';
+      const label = season.name || id;
+      const selected = id === selectedId ? 'selected' : '';
+      return `<option value="${id}" ${selected}>${label}</option>`;
+    }).join('');
+  }
+  const fallback = [
+    { id: 'spring', label: 'Printemps' },
+    { id: 'summer', label: 'Ete' },
+    { id: 'autumn', label: 'Automne' },
+    { id: 'winter', label: 'Hiver' }
+  ];
+  return fallback.map((season) => {
+    const selected = season.id === selectedId ? 'selected' : '';
+    return `<option value="${season.id}" ${selected}>${season.label}</option>`;
+  }).join('');
+}
+
+function buildWeatherOptions(selectedId) {
+  if (typeof WEATHER_TYPES !== 'undefined' && Array.isArray(WEATHER_TYPES)) {
+    return WEATHER_TYPES.map((weather) => {
+      const id = weather.id || 'sun';
+      const label = weather.name || id;
+      const selected = id === selectedId ? 'selected' : '';
+      return `<option value="${id}" ${selected}>${label}</option>`;
+    }).join('');
+  }
+  const fallback = [
+    { id: 'sun', label: 'Soleil' },
+    { id: 'rain', label: 'Pluie' },
+    { id: 'cloud', label: 'Nuages' },
+    { id: 'storm', label: 'Orage' },
+    { id: 'frost', label: 'Gel' }
+  ];
+  return fallback.map((weather) => {
+    const selected = weather.id === selectedId ? 'selected' : '';
+    return `<option value="${weather.id}" ${selected}>${weather.label}</option>`;
+  }).join('');
+}
+
+function buildPlantOptions(selectedId) {
+  if (typeof PLANTS !== 'undefined' && Array.isArray(PLANTS)) {
+    return PLANTS.map((plant) => {
+      const id = plant.id || '';
+      const label = plant.name || id;
+      const selected = id === selectedId ? 'selected' : '';
+      return `<option value="${id}" ${selected}>${label}</option>`;
+    }).join('');
+  }
+  return '<option value="grass">Herbe</option>';
+}
+
+function buildBuildingOptions(selectedId) {
+  if (typeof BUILDINGS !== 'undefined' && Array.isArray(BUILDINGS)) {
+    return BUILDINGS.map((building) => {
+      const id = building.id || '';
+      const label = building.name || id;
+      const selected = id === selectedId ? 'selected' : '';
+      return `<option value="${id}" ${selected}>${label}</option>`;
+    }).join('');
+  }
+  return '<option value="sprinkler">Arrosoir</option>';
+}
+
+function getNumberInputValue(id, fallback = 0) {
+  const input = document.getElementById(id);
+  if (!input) return fallback;
+  const value = Number(input.value);
+  return Number.isFinite(value) ? value : fallback;
+}
+
+function getSelectValue(id, fallback = '') {
+  const select = document.getElementById(id);
+  if (!select) return fallback;
+  return select.value || fallback;
+}
+
+function sendPlayerUpdate() {
+  if (!multiplayerState.connected || !multiplayerState.socket) return;
+
+  const playerData = {
+    id: multiplayerState.playerId,
+    name: state.playerName || 'Joueur',
+    coins: state.coins,
+    level: state.level || 1,
+    prestigeLevel: state.prestige?.level || 0,
+    totalPlants: state.stats?.totalPlants || 0,
+    season: getSeasonIdFromState(),
+    weather: getWeatherIdFromState()
+  };
+
+  multiplayerState.socket.emit('player-update', playerData);
+}
+
+// ============================================
+// AUTHENTIFICATION ADMIN
+// ============================================
+
+function authenticateAdmin(password) {
+  if (!multiplayerState.connected) {
+    if (typeof showToast === 'function') {
+      showToast('❌ Non connecté au serveur', 'error');
+    }
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-authenticate', password);
+}
+
+// ============================================
+// ACTIONS ADMIN
+// ============================================
+
+function adminSendCoins(targetPlayerId, amount) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Accès admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'send-coins',
+    targetId: targetPlayerId,
+    amount: amount
+  });
+
+  showToast(`💰 ${amount} coins envoyés`, 'success');
+}
+
+function adminChangeWeather(targetPlayerId, weather) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Accès admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'change-weather',
+    targetId: targetPlayerId,
+    weather: weather
+  });
+
+  showToast(`🌤️ Météo changée: ${weather}`, 'success');
+}
+
+function adminChangeSeason(targetPlayerId, season) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Accès admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'change-season',
+    targetId: targetPlayerId,
+    season: season
+  });
+
+  showToast(`🍂 Saison changée: ${season}`, 'success');
+}
+
+function adminBroadcast(message) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Accès admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'broadcast',
+    message: message
+  });
+
+  showToast('📢 Message diffusé', 'success');
+}
+
+function adminKickPlayer(targetPlayerId) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Accès admin requis', 'error');
+    return;
+  }
+
+  if (!confirm('Êtes-vous sûr de vouloir expulser ce joueur?')) return;
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'kick-player',
+    targetId: targetPlayerId
+  });
+
+  showToast('🚫 Joueur expulsé', 'warning');
+}
+
+function adminAdjustCoins(targetPlayerId, amount) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'adjust-coins',
+    targetId: targetPlayerId,
+    amount: amount
+  });
+
+  showToast(`💰 ${amount} coins ajustes`, 'success');
+}
+
+function adminSetCoins(targetPlayerId, amount) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'set-coins',
+    targetId: targetPlayerId,
+    amount: amount
+  });
+
+  showToast(`💰 Solde fixe: ${amount}`, 'success');
+}
+
+function adminSendSeeds(targetPlayerId, plantId, amount) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'add-seeds',
+    targetId: targetPlayerId,
+    plantId: plantId,
+    amount: amount
+  });
+
+  showToast(`🌱 +${amount} graines`, 'success');
+}
+
+function adminSendSeedsAll(targetPlayerId, amount) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'add-seeds-all',
+    targetId: targetPlayerId,
+    amount: amount
+  });
+
+  showToast(`🌱 +${amount} graines (toutes)`, 'success');
+}
+
+function adminClearSeeds(targetPlayerId) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'clear-seeds',
+    targetId: targetPlayerId
+  });
+
+  showToast('🧹 Graines effacees', 'warning');
+}
+
+function adminAddSpecials(targetPlayerId) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'add-specials',
+    targetId: targetPlayerId
+  });
+
+  showToast('✨ Plantes speciales ajoutees', 'success');
+}
+
+function adminForceLegendaryEvent(targetPlayerId) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'force-legendary-event',
+    targetId: targetPlayerId
+  });
+
+  showToast('✨ Event legendaire force', 'success');
+}
+
+function adminResetStreak(targetPlayerId) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'reset-streak',
+    targetId: targetPlayerId
+  });
+
+  showToast('🔄 Streak reinitialisee', 'warning');
+}
+
+function adminForceHarvest(targetPlayerId) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'force-harvest',
+    targetId: targetPlayerId
+  });
+
+  showToast('🧺 Recolte forcee', 'success');
+}
+
+function adminAddBuilding(targetPlayerId, buildingId, amount) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'add-building',
+    targetId: targetPlayerId,
+    buildingId: buildingId,
+    amount: amount
+  });
+
+  showToast('🏗️ Batiment ajoute', 'success');
+}
+
+function adminAddHarvest(targetPlayerId, plantId, amount) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'add-harvest',
+    targetId: targetPlayerId,
+    plantId: plantId,
+    amount: amount
+  });
+
+  showToast('📦 Recolte ajoutee', 'success');
+}
+
+function adminSetPrestigeLevel(targetPlayerId, level) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'set-prestige-level',
+    targetId: targetPlayerId,
+    level: level
+  });
+
+  showToast('👑 Prestige modifie', 'success');
+}
+
+function adminResetSave(targetPlayerId) {
+  if (!multiplayerState.isAdmin) {
+    showToast('❌ Acces admin requis', 'error');
+    return;
+  }
+
+  multiplayerState.socket.emit('admin-action', {
+    type: 'reset-save',
+    targetId: targetPlayerId
+  });
+
+  showToast('♻️ Reset envoye', 'warning');
+}
+
+// ============================================
+// RECEVOIR DES CADEAUX ADMIN
+// ============================================
+
+function handleAdminGift(data) {
+  const applyRender = () => {
+    if (typeof needsRender !== 'undefined') needsRender = true;
+    if (typeof saveGame === 'function') saveGame();
+  };
+
+  const forceHarvestReady = () => {
+    if (!state?.garden?.plots || typeof harvestPlot !== 'function') return;
+    let harvested = 0;
+    state.garden.plots.forEach((plot, index) => {
+      if (plot.ready && plot.plantId) {
+        const mainIndex = plot.mainPlotIndex != null ? plot.mainPlotIndex : index;
+        harvestPlot(mainIndex);
+        harvested++;
+      }
+    });
+    if (harvested == 0) {
+      showToast('Aucune plante prete', 'info');
+    }
+  };
+
+  switch (data.type) {
+    case 'send-coins':
+    case 'adjust-coins': {
+      const amount = Number(data.amount) || 0;
+      state.coins = Math.max(0, state.coins + amount);
+      if (amount > 0) {
+        state.lifetimeCoins = Math.max(0, state.lifetimeCoins + amount);
+      }
+      showToast(`?? Admin a ajuste ${amount} coins`, 'success');
+      applyRender();
+      break;
+    }
+
+    case 'set-coins': {
+      const amount = Math.max(0, Number(data.amount) || 0);
+      state.coins = amount;
+      state.lifetimeCoins = Math.max(state.lifetimeCoins || 0, amount);
+      showToast(`?? Solde fixe: ${amount}`, 'success');
+      applyRender();
+      break;
+    }
+
+    case 'change-weather': {
+      if (state.weather) {
+        state.weather.current = data.weather;
+        state.weather.startTime = Date.now();
+        state.weather.nextChange = Date.now() + (5 * 60 * 1000);
+        showToast(`??? Meteo: ${getWeatherLabel(data.weather)}`, 'info');
+        applyRender();
+      }
+      break;
+    }
+
+    case 'change-season': {
+      if (state.season) {
+        if (typeof SEASONS !== 'undefined' && Array.isArray(SEASONS)) {
+          const idx = SEASONS.findIndex((season) => season.id === data.season);
+          state.season.current = idx >= 0 ? idx : 0;
+          state.season.startTime = Date.now();
+          state.season.nextChange = Date.now() + SEASONS[state.season.current].duration;
+        } else {
+          state.season.current = data.season;
+        }
+        showToast(`?? Saison: ${getSeasonLabel(data.season)}`, 'info');
+        applyRender();
+      }
+      break;
+    }
+
+    case 'add-seeds': {
+      if (!state.seeds) state.seeds = {};
+      const amount = Math.max(0, Number(data.amount) || 0);
+      const plantId = data.plantId;
+      if (plantId) {
+        state.seeds[plantId] = (state.seeds[plantId] || 0) + amount;
+        showToast(`?? +${amount} graines`, 'success');
+        applyRender();
+      }
+      break;
+    }
+
+    case 'add-seeds-all': {
+      if (!state.seeds) state.seeds = {};
+      const amount = Math.max(0, Number(data.amount) || 0);
+      if (typeof PLANTS !== 'undefined' && Array.isArray(PLANTS)) {
+        PLANTS.forEach((plant) => {
+          state.seeds[plant.id] = (state.seeds[plant.id] || 0) + amount;
+        });
+      }
+      showToast(`?? +${amount} graines (toutes)`, 'success');
+      applyRender();
+      break;
+    }
+
+    case 'clear-seeds': {
+      if (state.seeds) {
+        Object.keys(state.seeds).forEach((key) => {
+          state.seeds[key] = 0;
+        });
+        showToast('?? Graines effacees', 'warning');
+        applyRender();
+      }
+      break;
+    }
+
+    case 'add-specials': {
+      if (!state.specialPlants) state.specialPlants = { inventory: {} };
+      if (!state.specialPlants.inventory) state.specialPlants.inventory = {};
+      if (typeof SPECIAL_PLANTS !== 'undefined' && Array.isArray(SPECIAL_PLANTS)) {
+        SPECIAL_PLANTS.forEach((plant) => {
+          state.specialPlants.inventory[plant.id] = (state.specialPlants.inventory[plant.id] || 0) + 1;
+        });
+        showToast('? Plantes speciales ajoutees', 'success');
+        applyRender();
+      }
+      break;
+    }
+
+    case 'force-legendary-event': {
+      if (typeof forceLegendaryEvent === 'function') {
+        forceLegendaryEvent();
+        showToast('? Event legendaire force', 'success');
+        applyRender();
+      }
+      break;
+    }
+
+    case 'reset-streak': {
+      state.dailyStreak = { current: 0, lastClaim: 0, canClaim: true, claimedDays: [] };
+      showToast('?? Streak reinitialisee', 'warning');
+      applyRender();
+      break;
+    }
+
+    case 'force-harvest': {
+      forceHarvestReady();
+      applyRender();
+      break;
+    }
+
+    case 'add-building': {
+      const amount = Math.max(0, Number(data.amount) || 0);
+      const buildingId = data.buildingId;
+      if (!buildingId) break;
+      if (!state.buildingInventory) state.buildingInventory = {};
+      if (!state.owned) state.owned = { plants: {}, buildings: {} };
+      if (!state.owned.buildings) state.owned.buildings = {};
+      state.buildingInventory[buildingId] = (state.buildingInventory[buildingId] || 0) + amount;
+      state.owned.buildings[buildingId] = (state.owned.buildings[buildingId] || 0) + amount;
+      showToast('??? Batiment ajoute', 'success');
+      applyRender();
+      break;
+    }
+
+    case 'add-harvest': {
+      const amount = Math.max(0, Number(data.amount) || 0);
+      const plantId = data.plantId;
+      if (!plantId) break;
+      if (!state.inventory) state.inventory = { harvests: {}, craftingMaterials: {} };
+      if (!state.inventory.harvests) state.inventory.harvests = {};
+      state.inventory.harvests[plantId] = (state.inventory.harvests[plantId] || 0) + amount;
+      showToast('?? Recolte ajoutee', 'success');
+      applyRender();
+      break;
+    }
+
+    case 'set-prestige-level': {
+      const level = Math.max(0, Math.floor(Number(data.level) || 0));
+      if (!state.prestige) state.prestige = { level: 0, multiplier: 1 };
+      state.prestige.level = level;
+      if (typeof getPrestigeMultiplier === 'function') {
+        state.prestige.multiplier = getPrestigeMultiplier(level);
+      } else if (typeof PRESTIGE !== 'undefined' && PRESTIGE.bonusPerLevel) {
+        state.prestige.multiplier = 1 + (level * PRESTIGE.bonusPerLevel);
+      }
+      showToast('?? Prestige modifie', 'success');
+      applyRender();
+      break;
+    }
+
+    case 'reset-save': {
+      showToast('?? Reset en cours...', 'warning');
+      setTimeout(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+        location.reload();
+      }, 800);
+      break;
+    }
+
+    case 'broadcast': {
+      showToast(`?? Admin: ${data.message}`, 'info');
+      break;
+    }
+  }
+}
+
+// ============================================
+// UI ADMIN MULTIPLAYER
+// ============================================
+
+function openAdminMultiplayerPanel() {
+  const modal = document.getElementById('admin-multiplayer-modal');
+  if (!modal) {
+    createAdminMultiplayerModal();
+  }
+
+  const modalElement = document.getElementById('admin-multiplayer-modal');
+  if (modalElement) {
+    modalElement.classList.add('show');
+    renderAdminPlayersList();
+  }
+}
+
+function closeAdminMultiplayerPanel() {
+  const modal = document.getElementById('admin-multiplayer-modal');
+  if (modal) {
+    modal.classList.remove('show');
+  }
+}
+
+function createAdminMultiplayerModal() {
+  const modal = document.createElement('div');
+  modal.id = 'admin-multiplayer-modal';
+  modal.className = 'modal';
+  modal.innerHTML = `
+    <div class="modal-content" style="max-width: 900px;">
+      <div class="modal-header">
+        <h2>👑 Panel Admin Multiplayer</h2>
+        <button class="modal-close" onclick="closeAdminMultiplayerPanel()">&times;</button>
+      </div>
+      <div class="modal-body" style="max-height: 600px; overflow-y: auto;">
+        <div id="admin-players-list"></div>
+
+        <div style="margin-top: 30px; padding: 20px; background: rgba(52, 152, 219, 0.1); border-radius: 12px; border: 2px solid #3498db;">
+          <h3 style="margin-top: 0;">📢 Message Global</h3>
+          <div style="display: flex; gap: 10px;">
+            <input
+              type="text"
+              id="admin-broadcast-input"
+              placeholder="Message à tous les joueurs..."
+              style="flex: 1; padding: 10px; border-radius: 8px; border: 2px solid #3498db;"
+            />
+            <button class="btn" onclick="sendBroadcast()" style="background: #3498db;">
+              📢 Envoyer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+function renderAdminPlayersList() {
+  const container = document.getElementById('admin-players-list');
+  if (!container) return;
+
+  if (multiplayerState.players.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: var(--text-light);">
+        Aucun joueur connecte
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = multiplayerState.players.map(player => {
+    const seasonLabel = getSeasonLabel(player.season);
+    const weatherLabel = getWeatherLabel(player.weather);
+    const seasonOptions = buildSeasonOptions(player.season);
+    const weatherOptions = buildWeatherOptions(player.weather);
+    const plantOptions = buildPlantOptions();
+    const buildingOptions = buildBuildingOptions();
+
+    return `
+    <div class="admin-player-card" style="
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.9));
+      border: 2px solid rgba(52, 152, 219, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 15px;
+    ">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+        <div>
+          <h3 style="margin: 0 0 10px 0; color: #3498db;">
+            ${player.id === multiplayerState.playerId ? '?? ' : ''}${player.name}
+          </h3>
+          <div style="display: flex; gap: 20px; font-size: 0.9em; color: var(--text-light);">
+            <span>?? ${player.coins.toLocaleString()} coins</span>
+            <span>??? Niv. ${player.level}</span>
+            <span>?? Prestige ${player.prestigeLevel}</span>
+          </div>
+          <div style="display: flex; gap: 15px; margin-top: 8px; font-size: 0.85em;">
+            <span>?? ${seasonLabel}</span>
+            <span>??? ${weatherLabel}</span>
+          </div>
+        </div>
+        ${player.id !== multiplayerState.playerId ? `
+          <button
+            class="btn danger"
+            onclick="adminKickPlayer('${player.id}')"
+            style="font-size: 0.85em; padding: 6px 12px;"
+          >
+            ?? Kick
+          </button>
+        ` : ''}
+      </div>
+
+      ${player.id !== multiplayerState.playerId ? `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 15px;">
+          <div style="display: flex; gap: 5px;">
+            <input
+              type="number"
+              id="coins-${player.id}"
+              placeholder="Montant"
+              value="1000"
+              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #2ecc71; font-size: 0.9em;"
+            />
+            <button
+              class="btn"
+              onclick="adminAdjustCoins('${player.id}', getNumberInputValue('coins-${player.id}', 0))"
+              style="background: #2ecc71; font-size: 0.9em; padding: 8px 10px;"
+            >
+              +/?
+            </button>
+            <button
+              class="btn"
+              onclick="adminSetCoins('${player.id}', getNumberInputValue('coins-${player.id}', 0))"
+              style="background: #27ae60; font-size: 0.9em; padding: 8px 10px;"
+            >
+              =
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 5px;">
+            <select
+              id="weather-${player.id}"
+              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #3498db; font-size: 0.9em;"
+            >
+              ${weatherOptions}
+            </select>
+            <button
+              class="btn"
+              onclick="adminChangeWeather('${player.id}', getSelectValue('weather-${player.id}', 'sun'))"
+              style="background: #3498db; font-size: 0.9em; padding: 8px 12px;"
+            >
+              ???
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 5px;">
+            <select
+              id="season-${player.id}"
+              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #9b59b6; font-size: 0.9em;"
+            >
+              ${seasonOptions}
+            </select>
+            <button
+              class="btn"
+              onclick="adminChangeSeason('${player.id}', getSelectValue('season-${player.id}', 'spring'))"
+              style="background: #9b59b6; font-size: 0.9em; padding: 8px 12px;"
+            >
+              ??
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 5px;">
+            <select
+              id="seed-${player.id}"
+              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #16a085; font-size: 0.9em;"
+            >
+              ${plantOptions}
+            </select>
+            <input
+              type="number"
+              id="seed-amount-${player.id}"
+              value="5"
+              style="width: 80px; padding: 8px; border-radius: 6px; border: 2px solid #16a085; font-size: 0.9em;"
+            />
+            <button
+              class="btn"
+              onclick="adminSendSeeds('${player.id}', getSelectValue('seed-${player.id}'), getNumberInputValue('seed-amount-${player.id}', 1))"
+              style="background: #16a085; font-size: 0.9em; padding: 8px 12px;"
+            >
+              ??
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 5px;">
+            <input
+              type="number"
+              id="seed-all-${player.id}"
+              value="3"
+              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #1abc9c; font-size: 0.9em;"
+            />
+            <button
+              class="btn"
+              onclick="adminSendSeedsAll('${player.id}', getNumberInputValue('seed-all-${player.id}', 1))"
+              style="background: #1abc9c; font-size: 0.9em; padding: 8px 12px;"
+            >
+              ?? All
+            </button>
+            <button
+              class="btn danger"
+              onclick="adminClearSeeds('${player.id}')"
+              style="font-size: 0.9em; padding: 8px 12px;"
+            >
+              Clear
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 5px;">
+            <select
+              id="harvest-${player.id}"
+              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #f39c12; font-size: 0.9em;"
+            >
+              ${plantOptions}
+            </select>
+            <input
+              type="number"
+              id="harvest-amount-${player.id}"
+              value="3"
+              style="width: 80px; padding: 8px; border-radius: 6px; border: 2px solid #f39c12; font-size: 0.9em;"
+            />
+            <button
+              class="btn"
+              onclick="adminAddHarvest('${player.id}', getSelectValue('harvest-${player.id}'), getNumberInputValue('harvest-amount-${player.id}', 1))"
+              style="background: #f39c12; font-size: 0.9em; padding: 8px 12px;"
+            >
+              ??
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 5px;">
+            <select
+              id="building-${player.id}"
+              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #8e44ad; font-size: 0.9em;"
+            >
+              ${buildingOptions}
+            </select>
+            <input
+              type="number"
+              id="building-amount-${player.id}"
+              value="1"
+              style="width: 80px; padding: 8px; border-radius: 6px; border: 2px solid #8e44ad; font-size: 0.9em;"
+            />
+            <button
+              class="btn"
+              onclick="adminAddBuilding('${player.id}', getSelectValue('building-${player.id}'), getNumberInputValue('building-amount-${player.id}', 1))"
+              style="background: #8e44ad; font-size: 0.9em; padding: 8px 12px;"
+            >
+              ???
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 5px;">
+            <input
+              type="number"
+              id="prestige-${player.id}"
+              value="0"
+              style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #c0392b; font-size: 0.9em;"
+            />
+            <button
+              class="btn"
+              onclick="adminSetPrestigeLevel('${player.id}', getNumberInputValue('prestige-${player.id}', 0))"
+              style="background: #c0392b; font-size: 0.9em; padding: 8px 12px;"
+            >
+              ?? Prestige
+            </button>
+          </div>
+
+          <button
+            class="btn"
+            onclick="adminAddSpecials('${player.id}')"
+            style="background: #9b59b6; font-size: 0.9em; padding: 8px 12px;"
+          >
+            ? Specials
+          </button>
+
+          <button
+            class="btn"
+            onclick="adminForceLegendaryEvent('${player.id}')"
+            style="background: #f1c40f; font-size: 0.9em; padding: 8px 12px;"
+          >
+            ?? Legendary
+          </button>
+
+          <button
+            class="btn"
+            onclick="adminResetStreak('${player.id}')"
+            style="background: #d35400; font-size: 0.9em; padding: 8px 12px;"
+          >
+            ?? Reset Streak
+          </button>
+
+          <button
+            class="btn"
+            onclick="adminForceHarvest('${player.id}')"
+            style="background: #2ecc71; font-size: 0.9em; padding: 8px 12px;"
+          >
+            ?? Harvest
+          </button>
+
+          <button
+            class="btn danger"
+            onclick="if (confirm('Reset complet de ce joueur?')) adminResetSave('${player.id}')"
+            style="font-size: 0.9em; padding: 8px 12px;"
+          >
+            ?? Reset Save
+          </button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+  }).join('');
+}
+
+function sendBroadcast() {
+  const input = document.getElementById('admin-broadcast-input');
+  if (!input || !input.value.trim()) return;
+
+  adminBroadcast(input.value.trim());
+  input.value = '';
+}
+
+// ============================================
+// BOUTON ADMIN DANS LE PANEL
+// ============================================
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Ajouter bouton multiplayer dans admin panel
+  const adminPanel = document.getElementById('admin-panel');
+  if (adminPanel) {
+    const adminBody = adminPanel.querySelector('.admin-body');
+    if (adminBody) {
+      const multiplayerRow = document.createElement('div');
+      multiplayerRow.className = 'admin-row';
+      multiplayerRow.innerHTML = `
+        <button id="admin-multiplayer-connect" class="btn accent">
+          🌐 ${SERVER_CONFIG.enabled ? 'Panel Multiplayer' : 'Activer Multiplayer'}
+        </button>
+      `;
+      adminBody.appendChild(multiplayerRow);
+
+      document.getElementById('admin-multiplayer-connect')?.addEventListener('click', () => {
+        if (!SERVER_CONFIG.enabled) {
+          const enable = confirm('Activer le mode multiplayer?\n\nVous devez avoir un serveur configuré.');
+          if (enable) {
+            SERVER_CONFIG.enabled = true;
+            initMultiplayer();
+          }
+          return;
+        }
+
+        if (!multiplayerState.connected) {
+          showToast('❌ Non connecté au serveur', 'error');
+          return;
+        }
+
+        if (!multiplayerState.isAdmin) {
+          const password = prompt('Mot de passe admin:');
+          if (password) {
+            authenticateAdmin(password);
+          }
+        } else {
+          openAdminMultiplayerPanel();
+        }
+      });
+    }
+  }
+});
+
+// Envoyer des updates périodiques
+setInterval(() => {
+  if (multiplayerState.connected) {
+    sendPlayerUpdate();
+  }
+}, 5000); // Toutes les 5 secondes
+
+// Exposer les fonctions globalement
+window.initMultiplayer = initMultiplayer;
+window.authenticateAdmin = authenticateAdmin;
+window.adminAdjustCoins = adminAdjustCoins;
+window.adminSetCoins = adminSetCoins;
+window.adminSendSeeds = adminSendSeeds;
+window.adminSendSeedsAll = adminSendSeedsAll;
+window.adminClearSeeds = adminClearSeeds;
+window.adminAddSpecials = adminAddSpecials;
+window.adminForceLegendaryEvent = adminForceLegendaryEvent;
+window.adminResetStreak = adminResetStreak;
+window.adminForceHarvest = adminForceHarvest;
+window.adminAddBuilding = adminAddBuilding;
+window.adminAddHarvest = adminAddHarvest;
+window.adminSetPrestigeLevel = adminSetPrestigeLevel;
+window.adminResetSave = adminResetSave;
+window.adminChangeWeather = adminChangeWeather;
+window.adminChangeSeason = adminChangeSeason;
+window.adminBroadcast = adminBroadcast;
+window.adminKickPlayer = adminKickPlayer;
+window.closeAdminMultiplayerPanel = closeAdminMultiplayerPanel;
+window.sendBroadcast = sendBroadcast;
+
+console.log('✅ Multiplayer Admin system loaded (client)');

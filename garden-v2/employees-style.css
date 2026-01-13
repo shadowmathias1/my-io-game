@@ -1,0 +1,480 @@
+/* ============================================
+   EMPLOYEES STYLES
+   ============================================ */
+
+/* Employees Modal */
+#employees-modal .modal-content {
+  max-width: 1000px;
+}
+
+.employees-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  background: rgba(0,0,0,0.05);
+  padding: 5px;
+  border-radius: 12px;
+}
+
+.employees-tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95em;
+  transition: all 0.3s ease;
+  color: var(--text-light);
+  font-family: 'Poppins', sans-serif;
+}
+
+.employees-tab:hover {
+  background: rgba(255,255,255,0.5);
+}
+
+.employees-tab.active {
+  background: white;
+  color: var(--primary-green);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.employees-content {
+  display: none;
+}
+
+.employees-content.active {
+  display: block;
+}
+
+.employees-description {
+  background: rgba(46, 204, 113, 0.1);
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  border-left: 4px solid var(--primary-green);
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.employees-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+/* Available Employees Grid */
+.available-employees-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 15px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.employee-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,249,250,0.9));
+  border: 2px solid rgba(0,0,0,0.1);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.employee-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-green), var(--dark-green));
+  opacity: 0.8;
+}
+
+.employee-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(46, 204, 113, 0.2);
+  border-color: var(--primary-green);
+}
+
+.employee-card.locked {
+  opacity: 0.6;
+  filter: grayscale(0.5);
+}
+
+.employee-card.locked::before {
+  background: linear-gradient(90deg, #95a5a6, #7f8c8d);
+}
+
+.employee-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.employee-icon {
+  font-size: 2.5em;
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+}
+
+.employee-info {
+  flex: 1;
+}
+
+.employee-info h3 {
+  font-size: 1.1em;
+  font-weight: 700;
+  margin-bottom: 3px;
+  color: var(--text-dark);
+}
+
+.employee-level {
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--primary-green);
+  background: rgba(46, 204, 113, 0.1);
+  padding: 2px 8px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.employee-description {
+  font-size: 0.85em;
+  color: var(--text-light);
+  margin-bottom: 12px;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.employee-stats {
+  background: rgba(0,0,0,0.03);
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.employee-stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85em;
+  margin-bottom: 5px;
+  color: var(--text-dark);
+}
+
+.employee-stat:last-child {
+  margin-bottom: 0;
+}
+
+.employee-stat span {
+  color: var(--text-light);
+}
+
+.employee-stat strong {
+  color: var(--primary-green);
+  font-weight: 700;
+}
+
+.employee-hire-btn {
+  width: 100%;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+  color: white;
+}
+
+.employee-hire-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 204, 113, 0.3);
+}
+
+.employee-hire-btn.upgrade {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.employee-hire-btn.max-level {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  cursor: default;
+}
+
+.employee-hire-btn:disabled,
+.employee-hire-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #95a5a6;
+}
+
+/* Hired Employees List */
+.hired-employees-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.hired-employee-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,249,250,0.9));
+  border: 2px solid rgba(0,0,0,0.1);
+  border-radius: 16px;
+  padding: 15px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.hired-employee-card.working {
+  border-color: #3498db;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+}
+
+.hired-employee-card.ready {
+  border-color: var(--primary-green);
+  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+  animation: ready-pulse 2s infinite;
+}
+
+.hired-employee-card.paused {
+  opacity: 0.6;
+  border-color: #95a5a6;
+}
+
+@keyframes ready-pulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(46, 204, 113, 0.4);
+  }
+}
+
+.hired-employee-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.hired-employee-icon {
+  font-size: 2em;
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+}
+
+.hired-employee-info {
+  flex: 1;
+}
+
+.hired-employee-info h4 {
+  font-size: 1em;
+  font-weight: 700;
+  margin-bottom: 3px;
+  color: var(--text-dark);
+}
+
+.hired-employee-level {
+  font-size: 0.8em;
+  color: var(--text-light);
+}
+
+.hired-employee-status {
+  font-size: 0.85em;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 8px;
+}
+
+.hired-employee-status.working {
+  background: rgba(52, 152, 219, 0.2);
+  color: #2980b9;
+}
+
+.hired-employee-status.ready {
+  background: rgba(46, 204, 113, 0.2);
+  color: var(--dark-green);
+}
+
+.hired-employee-status.paused {
+  background: rgba(149, 165, 166, 0.2);
+  color: #7f8c8d;
+}
+
+.hired-employee-progress {
+  height: 8px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.hired-employee-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-green), var(--dark-green));
+  transition: width 1s linear;
+  border-radius: 10px;
+}
+
+.hired-employee-card.paused .hired-employee-progress-bar {
+  background: #95a5a6;
+}
+
+.hired-employee-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.employee-toggle-btn,
+.employee-fire-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.employee-toggle-btn {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+}
+
+.employee-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.employee-toggle-btn.active {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+}
+
+.employee-fire-btn {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+}
+
+.employee-fire-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+/* Employees Status Display (Header) */
+.employees-status-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(46, 204, 113, 0.1);
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 2px solid rgba(46, 204, 113, 0.3);
+}
+
+.employees-status-icon {
+  font-size: 1.2em;
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+}
+
+.employees-status-text {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--dark-green);
+}
+
+/* Scrollbar styles */
+.available-employees-grid::-webkit-scrollbar,
+.hired-employees-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.available-employees-grid::-webkit-scrollbar-track,
+.hired-employees-list::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.05);
+  border-radius: 10px;
+}
+
+.available-employees-grid::-webkit-scrollbar-thumb,
+.hired-employees-list::-webkit-scrollbar-thumb {
+  background: var(--primary-green);
+  border-radius: 10px;
+}
+
+.available-employees-grid::-webkit-scrollbar-thumb:hover,
+.hired-employees-list::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-green);
+}
+
+/* Dark theme support */
+body[data-theme="dark"] .employee-card,
+body[data-theme="dark"] .hired-employee-card {
+  background: linear-gradient(135deg, rgba(25, 32, 48, 0.95), rgba(19, 25, 38, 0.95));
+  border-color: rgba(255,255,255,0.08);
+}
+
+body[data-theme="dark"] .employee-info h3,
+body[data-theme="dark"] .hired-employee-info h4,
+body[data-theme="dark"] .employee-stat {
+  color: #e6edf5;
+}
+
+body[data-theme="dark"] .employee-stats {
+  background: rgba(255,255,255,0.03);
+}
+
+body[data-theme="dark"] .employees-tab {
+  color: #b9c2d0;
+}
+
+body[data-theme="dark"] .employees-tab.active {
+  background: #1b2336;
+  color: #9be5bb;
+}
+
+body[data-theme="dark"] .employees-status-display {
+  background: rgba(46, 204, 113, 0.15);
+  border-color: rgba(46, 204, 113, 0.3);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .available-employees-grid {
+    grid-template-columns: 1fr;
+    max-height: 450px;
+  }
+
+  .employee-card {
+    padding: 15px;
+  }
+
+  .employee-icon {
+    font-size: 2em !important;
+  }
+
+  .employee-header {
+    gap: 10px;
+  }
+
+  .hired-employee-icon {
+    font-size: 1.6em !important;
+  }
+
+  .hired-employee-actions {
+    flex-direction: column;
+  }
+
+  .employee-toggle-btn,
+  .employee-fire-btn {
+    width: 100%;
+  }
+}

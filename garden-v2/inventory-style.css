@@ -1,0 +1,473 @@
+/* ============================================
+   INVENTORY & CRAFTING STYLES
+   ============================================ */
+
+/* Inventory Modal */
+#inventory-modal .modal-content {
+  max-width: 800px;
+}
+
+.inventory-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  background: rgba(0,0,0,0.05);
+  padding: 5px;
+  border-radius: 12px;
+}
+
+.inventory-tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95em;
+  transition: all 0.3s ease;
+  color: var(--text-light);
+  font-family: 'Poppins', sans-serif;
+}
+
+.inventory-tab:hover {
+  background: rgba(255,255,255,0.5);
+}
+
+.inventory-tab.active {
+  background: white;
+  color: var(--primary-green);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.inventory-content {
+  display: none;
+}
+
+.inventory-content.active {
+  display: block;
+}
+
+.inventory-description,
+.crafting-description {
+  background: rgba(46, 204, 113, 0.1);
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  border-left: 4px solid var(--primary-green);
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.inventory-item {
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,249,250,0.9));
+  border: 2px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.inventory-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-green), var(--gold));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.inventory-item:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary-green);
+  box-shadow: 0 6px 16px rgba(46, 204, 113, 0.2);
+}
+
+.inventory-item:hover::before {
+  opacity: 1;
+}
+
+.inventory-item-icon {
+  font-size: 2.5em;
+  margin-bottom: 8px;
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+}
+
+.inventory-item-name {
+  font-weight: 600;
+  font-size: 0.85em;
+  color: var(--text-dark);
+  margin-bottom: 5px;
+}
+
+.inventory-item-quantity {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: var(--primary-green);
+  background: rgba(46, 204, 113, 0.1);
+  padding: 4px 8px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.inventory-item-rarity {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 1.2em;
+}
+
+.inventory-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+/* Crafting Modal */
+#crafting-modal .modal-content {
+  max-width: 900px;
+}
+
+.crafting-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.crafting-filter {
+  padding: 8px 16px;
+  border: 2px solid rgba(0,0,0,0.1);
+  background: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85em;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.crafting-filter:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.crafting-filter.active {
+  background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+  color: white;
+  border-color: var(--dark-green);
+}
+
+.recipes-grid {
+  display: grid;
+  gap: 15px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.recipe-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,249,250,0.9));
+  border: 2px solid rgba(0,0,0,0.1);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.recipe-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  opacity: 0.8;
+}
+
+.recipe-card.rarity-rare::before {
+  background: linear-gradient(90deg, #3498db, #2980b9);
+}
+
+.recipe-card.rarity-epic::before {
+  background: linear-gradient(90deg, #9b59b6, #8e44ad);
+}
+
+.recipe-card.rarity-legendary::before {
+  background: linear-gradient(90deg, #f39c12, #e67e22);
+}
+
+.recipe-card.rarity-mythic::before {
+  background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+.recipe-card.rarity-divine::before {
+  background: linear-gradient(90deg, #ff00ff, #8b008b);
+  animation: divine-shimmer 2s infinite;
+}
+
+@keyframes divine-shimmer {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.recipe-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.recipe-card.locked {
+  opacity: 0.6;
+  filter: grayscale(0.5);
+}
+
+.recipe-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.recipe-result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.recipe-result-icon {
+  font-size: 2.5em;
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+}
+
+.recipe-result-info h3 {
+  font-size: 1.1em;
+  font-weight: 700;
+  margin-bottom: 3px;
+  color: var(--text-dark);
+}
+
+.recipe-result-rarity {
+  font-size: 0.85em;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.recipe-result-rarity.rare {
+  background: rgba(52, 152, 219, 0.2);
+  color: #2980b9;
+}
+
+.recipe-result-rarity.epic {
+  background: rgba(155, 89, 182, 0.2);
+  color: #8e44ad;
+}
+
+.recipe-result-rarity.legendary {
+  background: rgba(243, 156, 18, 0.2);
+  color: #e67e22;
+}
+
+.recipe-result-rarity.mythic {
+  background: rgba(231, 76, 60, 0.2);
+  color: #c0392b;
+}
+
+.recipe-result-rarity.divine {
+  background: rgba(255, 0, 255, 0.2);
+  color: #8b008b;
+}
+
+.recipe-description {
+  font-size: 0.85em;
+  color: var(--text-light);
+  margin-bottom: 15px;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.recipe-ingredients {
+  background: rgba(0,0,0,0.03);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.recipe-ingredients-title {
+  font-size: 0.9em;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+}
+
+.recipe-ingredients-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.recipe-ingredient {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.08);
+  font-size: 0.85em;
+}
+
+.recipe-ingredient.insufficient {
+  opacity: 0.5;
+  border-color: var(--red);
+}
+
+.recipe-ingredient-icon {
+  font-size: 1.5em;
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+}
+
+.recipe-ingredient-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.recipe-ingredient-name {
+  font-weight: 600;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recipe-ingredient-amount {
+  font-size: 0.9em;
+  color: var(--text-light);
+}
+
+.recipe-ingredient-amount.has-enough {
+  color: var(--primary-green);
+  font-weight: 600;
+}
+
+.recipe-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recipe-unlock-requirement {
+  font-size: 0.8em;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.recipe-craft-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+  color: white;
+}
+
+.recipe-craft-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 204, 113, 0.3);
+}
+
+.recipe-craft-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.recipe-craft-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #95a5a6;
+}
+
+.recipe-locked-message {
+  background: rgba(231, 76, 60, 0.1);
+  border-left: 4px solid var(--red);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 0.85em;
+  color: var(--red);
+  font-weight: 600;
+}
+
+/* Scrollbar styles */
+.inventory-grid::-webkit-scrollbar,
+.recipes-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.inventory-grid::-webkit-scrollbar-track,
+.recipes-grid::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.05);
+  border-radius: 10px;
+}
+
+.inventory-grid::-webkit-scrollbar-thumb,
+.recipes-grid::-webkit-scrollbar-thumb {
+  background: var(--primary-green);
+  border-radius: 10px;
+}
+
+.inventory-grid::-webkit-scrollbar-thumb:hover,
+.recipes-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-green);
+}
+
+/* Dark theme support */
+body[data-theme="dark"] .inventory-item,
+body[data-theme="dark"] .recipe-card {
+  background: linear-gradient(135deg, rgba(25, 32, 48, 0.95), rgba(19, 25, 38, 0.95));
+  border-color: rgba(255,255,255,0.08);
+}
+
+body[data-theme="dark"] .inventory-item-name,
+body[data-theme="dark"] .recipe-result-info h3,
+body[data-theme="dark"] .recipe-ingredient-name {
+  color: #e6edf5;
+}
+
+body[data-theme="dark"] .recipe-ingredients {
+  background: rgba(255,255,255,0.03);
+}
+
+body[data-theme="dark"] .recipe-ingredient {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.08);
+}
+
+body[data-theme="dark"] .inventory-tab {
+  color: #b9c2d0;
+}
+
+body[data-theme="dark"] .inventory-tab.active {
+  background: #1b2336;
+  color: #9be5bb;
+}

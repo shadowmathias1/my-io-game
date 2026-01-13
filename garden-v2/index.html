@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>Grow a Garden - v2 emoji fix</title>
+
+  <link rel="icon" href="data:,">
+
+  <link rel="stylesheet" href="style.css?v=12">
+  <link rel="stylesheet" href="mobile.css?v=1">
+  <link rel="stylesheet" href="inventory-style.css?v=1">
+  <link rel="stylesheet" href="employees-style.css?v=1">
+  <link rel="stylesheet" href="pests-style.css?v=1">
+  <link rel="stylesheet" href="customization-style.css?v=1">
+  <link rel="stylesheet" href="garden-enhancements.css?v=1">
+  <link rel="stylesheet" href="day-night-style.css?v=1">
+
+</head>
+
+<body>
+
+  <div id="season-effects" class="season-effects"></div>
+
+  <div id="app">
+
+    <header>
+
+      <div class="header-left">
+
+        <div class="logo">&#x1F331;</div>
+
+        <div>
+
+          <h1>Grow a Garden</h1>
+
+          <div class="header-buttons">
+
+            <button id="achievements-btn" class="icon-btn" title="Achievements">&#x1F3C6;</button>
+
+            <button id="daily-calendar-btn" class="icon-btn" title="Gains quotidiens">&#x1F4C6;</button>
+
+            <button id="collection-btn" class="icon-btn" title="Collection">&#x1F4DA;</button>
+
+            <button id="inventory-btn" class="icon-btn" title="Inventaire">&#x1F392;</button>
+
+            <button id="crafting-btn" class="icon-btn" title="Crafting">&#x1F9EA;</button>
+
+            <button id="pests-btn" class="icon-btn" title="Nuisibles">&#x1F41B;</button>
+
+            <button id="customization-btn" class="icon-btn" title="Personnalisation">&#x1F3A8;</button>
+
+            <button id="lights-btn" class="icon-btn" title="Lumières">&#x1F4A1;</button>
+
+            <button id="settings-btn" class="icon-btn" title="Param&#xE8;tres">&#9881;</button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="header-center">
+
+        <div id="day-night-indicator"></div>
+
+        <div id="season-indicator" class="season-indicator"></div>
+
+        <div id="season-event" class="season-event"></div>
+
+        <div id="weather-panel" class="weather-panel"></div>
+
+      </div>
+
+      <div class="player-info">
+
+        <div class="coins-display">
+
+          <span>&#x1F4B0;</span>
+
+          <span id="coins">0</span>
+
+        </div>
+
+        <div class="cps-display">
+
+          +<span id="cps">0</span>/s
+
+        </div>
+
+        <div class="seeds-display">
+
+          &#x1F331; <span id="seeds-count">0</span> graines
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+
+    <main>
+
+      <section class="garden-section">
+
+        <h2>Jardin <span id="garden-size">3x3</span></h2>
+
+        <div id="automation-status"></div>
+
+        <div id="employees-status"></div>
+
+        <div id="pests-status"></div>
+
+        <div id="active-buildings" class="active-buildings"></div>
+
+        <div id="special-plants-inventory"></div>
+
+        <div id="building-inventory"></div>
+
+        <div id="garden" class="garden"></div>
+
+        <button id="harvest-all" class="btn accent">R&#xE9;colter Tout</button>
+
+        <div id="garden-expand" style="margin-top: 10px;"></div>
+
+      </section>
+
+
+
+      <section class="shop-section">
+
+        <div class="shop-header">
+
+          <h2>Shop</h2>
+
+          <div class="muted" style="font-size:0.85em;">Prochain stock: <span id="market-timer">0:00</span></div>
+
+        </div>
+
+        <div id="weekly-offer" class="weekly-offer"></div>
+
+        <div class="tabs">
+
+          <button class="tab active" data-tab="plante">&#x1F331; Plantes</button>
+
+          <button class="tab" data-tab="fruit">&#x1F353; Fruits</button>
+
+          <button class="tab" data-tab="legume">&#x1F955; L&#xE9;gumes</button>
+
+          <button class="tab" data-tab="buildings">&#x1F3D7;&#xFE0F; Buildings</button>
+
+          <button class="tab" data-tab="employees">&#x1F477; Employés</button>
+
+          <button class="tab" data-tab="nocturnal">&#x1F319; Nocturnes</button>
+
+        </div>
+
+        <div id="shop-plante" class="shop-content active"></div>
+
+        <div id="shop-fruit" class="shop-content"></div>
+
+        <div id="shop-legume" class="shop-content"></div>
+
+        <div id="shop-buildings" class="shop-content"></div>
+
+        <div id="shop-employees" class="shop-content"></div>
+
+        <div id="shop-nocturnal" class="shop-content"></div>
+
+      </section>
+
+
+
+      <section class="stats-section">
+
+        <h2>Stats</h2>
+
+        <div id="stats"></div>
+
+      </section>
+
+    </main>
+
+
+
+
+
+    <footer>
+
+      <button id="save" class="btn">&#x1F4BE; Sauvegarder</button>
+
+      <button id="reset" class="btn danger">&#x1F504; R&#xE9;initialiser</button>
+
+      <div class="muted">Auto-save toutes les 10s</div>
+
+    </footer>
+
+  </div>
+
+
+
+  <div id="toasts"></div>
+
+  <div id="category-unlock-modal" class="modal">
+
+    <div class="modal-content">
+
+      <h3 id="category-unlock-title">D&#xE9;bloquer cat&#xE9;gorie</h3>
+
+      <p id="category-unlock-desc"></p>
+
+      <div class="modal-actions">
+
+        <button id="category-unlock-confirm" class="btn accent">&#128275; D&#xE9;bloquer</button>
+
+        <button id="category-unlock-cancel" class="btn">Annuler</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div id="admin-panel" class="admin-panel hidden">
+
+    <div class="admin-header">
+
+      <strong>Admin (temp)</strong>
+
+      <button id="admin-toggle" class="btn admin-toggle">Hide</button>
+
+    </div>
+
+    <div class="admin-body">
+
+      <div class="admin-row">
+
+        <button id="admin-add-1k" class="btn">+1000 coins</button>
+
+        <button id="admin-sub-1k" class="btn danger">-1000 coins</button>
+
+      </div>
+
+      <div class="admin-row">
+
+        <button id="admin-add-seeds" class="btn">+50 seeds (all)</button>
+
+        <button id="admin-clear-seeds" class="btn danger">Clear seeds</button>
+
+      </div>
+
+      <div class="admin-row">
+
+        <button id="admin-all-specials" class="btn">+1 each special</button>
+
+        <button id="admin-reset-streak" class="btn danger">R&#xE9;initialiser streak</button>
+
+      </div>
+
+      <div class="admin-row">
+
+        <button id="admin-next-season" class="btn">Next season</button>
+
+        <button id="admin-next-weather" class="btn">Next weather</button>
+
+        <button id="admin-force-harvest" class="btn">Harvest all ready</button>
+
+      </div>
+
+      <div class="admin-row">
+
+        <button id="admin-force-legendary" class="btn accent">&#x2728; Force Legendary Event</button>
+
+      </div>
+
+      <div class="admin-row">
+
+        <button id="admin-force-night" class="btn">🌙 Force Night</button>
+
+        <button id="admin-force-day" class="btn">☀️ Force Day</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+  <!-- Offline Reward Modal -->
+
+  <div id="offline-modal" class="modal">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h2>&#x23F0; Bon retour !</h2>
+
+      </div>
+
+      <div class="modal-body">
+
+        <p>Pendant votre absence, votre jardin a continu&#xE9; &#xE0; produire des coins !</p>
+
+        <div class="offline-stats">
+
+          <div class="offline-stat">
+
+            <div class="offline-stat-label">Temps d'absence</div>
+
+            <div class="offline-stat-value" id="offline-time">0 min</div>
+
+          </div>
+
+          <div class="offline-stat">
+
+            <div class="offline-stat-label">Production passive</div>
+
+            <div class="offline-stat-value" id="offline-rate">0/s</div>
+
+          </div>
+
+          <div class="offline-reward">
+
+            <div class="offline-reward-amount" id="offline-coins">+0 &#x1F4B0;</div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button id="claim-offline" class="btn accent">&#x2728; R&#xE9;clamer</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- Achievements Modal -->
+
+  <div id="achievements-modal" class="modal">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h2>&#x1F3C6; Achievements</h2>
+
+        <button class="modal-close" id="close-achievements">&times;</button>
+
+      </div>
+
+      <div class="modal-body">
+
+        <div id="achievements-list"></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- Daily Calendar Modal -->
+
+  <div id="daily-calendar-modal" class="modal">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h2>&#x1F4C6; Gains quotidiens</h2>
+
+        <button class="modal-close" id="close-daily-calendar">&times;</button>
+
+      </div>
+
+      <div class="modal-body">
+
+        <p class="calendar-description">Connecte-toi chaque jour pour r&#xE9;cup&#xE9;rer des r&#xE9;compenses ! Si tu manques un jour, la streak red&#xE9;marre &#xE0; z&#xE9;ro.</p>
+
+        <div id="daily-calendar"></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div id="settings-modal" class="modal">
+
+    <div class="modal-content settings-modal">
+
+      <div class="modal-header">
+
+        <h2>Param&#xE8;tres</h2>
+
+        <button class="modal-close" id="close-settings">&times;</button>
+
+      </div>
+
+      <div class="modal-body">
+
+        <div class="settings-row">
+
+          <div class="settings-label">Th&#xE8;me</div>
+
+          <div class="settings-controls">
+
+            <button id="theme-toggle" class="btn theme-toggle" type="button">Clair</button>
+
+          </div>
+
+          <div class="settings-hint">Clair / Sombre</div>
+
+        </div>
+
+        <div class="settings-row">
+
+          <div class="settings-label">Prestige</div>
+
+          <div class="settings-controls">
+
+            <button id="prestige-btn" class="btn danger" type="button">Prestige</button>
+
+          </div>
+
+          <div id="prestige-info" class="settings-hint"></div>
+
+        </div>
+
+        <div class="settings-row">
+
+          <div class="settings-label">Notifications</div>
+
+          <div class="settings-controls">
+
+            <button id="notifications-toggle" class="btn" type="button">Activées</button>
+
+          </div>
+
+          <div class="settings-hint">Recevoir des notifications de récolte</div>
+
+        </div>
+
+        <div class="settings-row">
+
+          <div class="settings-label">Animations</div>
+
+          <div class="settings-controls">
+
+            <button id="animations-toggle" class="btn" type="button">Activées</button>
+
+          </div>
+
+          <div class="settings-hint">Activer/désactiver les animations</div>
+
+        </div>
+
+        <div class="settings-row">
+
+          <div class="settings-label">Son</div>
+
+          <div class="settings-controls">
+
+            <button id="sound-toggle" class="btn" type="button">Activé</button>
+
+          </div>
+
+          <div class="settings-hint">Effets sonores du jeu</div>
+
+        </div>
+
+        <div class="settings-row">
+
+          <div class="settings-label">Sauvegarde Auto</div>
+
+          <div class="settings-controls">
+
+            <select id="autosave-interval" class="settings-select">
+              <option value="30">30 secondes</option>
+              <option value="60" selected>1 minute</option>
+              <option value="120">2 minutes</option>
+              <option value="300">5 minutes</option>
+            </select>
+
+          </div>
+
+          <div class="settings-hint">Fréquence de sauvegarde automatique</div>
+
+        </div>
+
+        <div class="settings-row">
+
+          <div class="settings-label">Qualité Graphique</div>
+
+          <div class="settings-controls">
+
+            <select id="graphics-quality" class="settings-select">
+              <option value="low">Basse</option>
+              <option value="medium">Moyenne</option>
+              <option value="high" selected>Haute</option>
+            </select>
+
+          </div>
+
+          <div class="settings-hint">Performance vs visuels</div>
+
+        </div>
+
+        <div class="settings-row">
+
+          <div class="settings-label">Mode Sombre Automatique</div>
+
+          <div class="settings-controls">
+
+            <button id="force-dark-mode-toggle" class="btn" type="button">Activé</button>
+
+          </div>
+
+          <div class="settings-hint">Force le mode sombre la nuit</div>
+
+        </div>
+
+        <div class="settings-row">
+
+          <div class="settings-label">Langue</div>
+
+          <div class="settings-controls">
+
+            <select id="language-select" class="settings-select">
+              <option value="fr" selected>Français</option>
+              <option value="en">English</option>
+              <option value="es">Español</option>
+              <option value="de">Deutsch</option>
+            </select>
+
+          </div>
+
+          <div class="settings-hint">Langue de l'interface</div>
+
+        </div>
+
+        <div class="settings-row">
+
+          <div class="settings-label">Exporter Sauvegarde</div>
+
+          <div class="settings-controls">
+
+            <button id="export-save-btn" class="btn" type="button">📥 Exporter</button>
+
+          </div>
+
+          <div class="settings-hint">Télécharger votre progression</div>
+
+        </div>
+
+        <div class="settings-row">
+
+          <div class="settings-label">Importer Sauvegarde</div>
+
+          <div class="settings-controls">
+
+            <button id="import-save-btn" class="btn" type="button">📤 Importer</button>
+
+          </div>
+
+          <div class="settings-hint">Charger une sauvegarde</div>
+
+        </div>
+
+        <div class="settings-row">
+
+          <div class="settings-label">Réinitialiser</div>
+
+          <div class="settings-controls">
+
+            <button id="reset-save-btn" class="btn danger" type="button">🗑️ Réinitialiser</button>
+
+          </div>
+
+          <div class="settings-hint">Effacer toutes les données</div>
+
+        </div>
+
+        <div class="settings-row">
+
+          <div class="settings-label">Admin</div>
+
+          <div class="settings-controls">
+
+            <button id="admin-unlock-btn" class="btn" type="button">Activer</button>
+
+          </div>
+
+          <div class="settings-hint">Code requis</div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div id="prestige-modal" class="modal">
+
+    <div class="modal-content">
+
+      <h3>Confirmer le prestige ?</h3>
+
+      <p>Votre progression est r&#xE9;initialis&#xE9;e, mais vous gagnez un bonus permanent.</p>
+
+      <div class="modal-actions">
+
+        <button id="confirm-prestige" class="btn danger">Confirmer</button>
+
+        <button id="cancel-prestige" class="btn">Annuler</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div id="admin-code-modal" class="modal">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h2>Admin</h2>
+
+        <button class="modal-close" id="close-admin-code">&times;</button>
+
+      </div>
+
+      <div class="modal-body">
+
+        <p>Entrez le code admin.</p>
+
+        <input id="admin-code-input" class="admin-code-input" type="password" placeholder="Code" autocomplete="off">
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button id="admin-code-confirm" class="btn accent" type="button">Valider</button>
+
+        <button id="admin-code-cancel" class="btn" type="button">Annuler</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div id="collection-modal" class="modal">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h2>Collection</h2>
+
+        <button class="modal-close" id="close-collection">&times;</button>
+
+      </div>
+
+      <div class="modal-body">
+
+        <div id="collection-summary" class="collection-summary"></div>
+
+        <div id="collection-list" class="collection-list"></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div id="social-modal" class="modal">
+
+    <div class="modal-content social-modal">
+
+      <div class="modal-header">
+
+        <h2>Social</h2>
+
+        <button class="modal-close" id="close-social">&times;</button>
+
+      </div>
+
+      <div class="modal-body">
+
+        <div class="social-section">
+
+          <h3>Classement local</h3>
+
+          <div id="leaderboard"></div>
+
+        </div>
+
+        <div class="social-section">
+
+          <h3>Exporter / Importer</h3>
+
+          <textarea id="save-json" rows="6" placeholder="JSON de sauvegarde..."></textarea>
+
+          <div class="modal-actions">
+
+            <button id="export-save" class="btn">Exporter</button>
+
+            <button id="import-save" class="btn danger">Importer</button>
+
+          </div>
+
+        </div>
+
+        <div class="social-section">
+
+          <h3>Codes de graines</h3>
+
+          <div class="seed-code-row">
+
+            <select id="seed-code-plant"></select>
+
+            <input id="seed-code-amount" type="number" min="1" max="99" value="3">
+
+            <button id="generate-seed-code" class="btn">G&#xE9;n&#xE9;rer</button>
+
+          </div>
+
+          <input id="seed-code-output" readonly placeholder="Code...">
+
+          <div class="seed-code-row">
+
+            <input id="seed-code-input" placeholder="Entrer un code">
+
+            <button id="redeem-seed-code" class="btn accent">Utiliser</button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div id="building-remove-modal" class="modal">
+
+    <div class="modal-content">
+
+      <h3>Retirer le b&#xE2;timent ?</h3>
+
+      <p>Le b&#xE2;timent sera remis dans votre r&#xE9;serve.</p>
+
+      <div class="modal-actions">
+
+        <button id="confirm-remove-building" class="btn danger">Retirer</button>
+
+        <button id="cancel-remove-building" class="btn">Annuler</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div id="plant-remove-modal" class="modal">
+
+    <div class="modal-content">
+
+      <h3>Retirer la plante ?</h3>
+
+      <p>Supprimer <span id="plant-remove-name">cette plante</span> du terrain.</p>
+
+      <div class="modal-actions">
+
+        <button id="confirm-remove-plant" class="btn danger">Retirer</button>
+
+        <button id="cancel-remove-plant" class="btn">Annuler</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Inventory Modal -->
+  <div id="inventory-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🎒 Inventaire</h2>
+        <button class="modal-close" id="close-inventory">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="inventory-tabs">
+          <button class="inventory-tab active" data-inv-tab="harvests">Récoltes</button>
+          <button class="inventory-tab" data-inv-tab="seeds">Graines</button>
+        </div>
+
+        <div id="inventory-harvests" class="inventory-content active">
+          <p class="inventory-description">Stockage de toutes vos récoltes pour le crafting</p>
+          <div id="harvests-list" class="inventory-grid"></div>
+        </div>
+
+        <div id="inventory-seeds" class="inventory-content">
+          <p class="inventory-description">Toutes vos graines disponibles</p>
+          <div id="seeds-list" class="inventory-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crafting Modal -->
+  <div id="crafting-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🧪 Station de Crafting</h2>
+        <button class="modal-close" id="close-crafting">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="crafting-description">
+          Mélangez vos récoltes pour créer des plantes rares et légendaires!
+        </p>
+
+        <div class="crafting-filters">
+          <button class="crafting-filter active" data-rarity="all">Toutes</button>
+          <button class="crafting-filter" data-rarity="rare">🔵 Rare</button>
+          <button class="crafting-filter" data-rarity="epic">🟣 Épique</button>
+          <button class="crafting-filter" data-rarity="legendary">🟡 Légendaire</button>
+          <button class="crafting-filter" data-rarity="mythic">🔴 Mythique</button>
+          <button class="crafting-filter" data-rarity="divine">⭐ Divin</button>
+        </div>
+
+        <div id="recipes-list" class="recipes-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Employees Modal -->
+  <div id="employees-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>👷 Employés</h2>
+        <button class="modal-close" id="close-employees">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="employees-tabs">
+          <button class="employees-tab active" data-emp-tab="available">Disponibles</button>
+          <button class="employees-tab" data-emp-tab="hired">Mes Employés</button>
+        </div>
+
+        <div id="employees-available" class="employees-content active">
+          <p class="employees-description">
+            Embauchez des employés pour automatiser votre jardin! Chaque employé peut être amélioré pour gagner en efficacité.
+          </p>
+          <div id="available-employees" class="available-employees-grid"></div>
+        </div>
+
+        <div id="employees-hired" class="employees-content">
+          <p class="employees-description">
+            Gérez vos employés actifs. Vous pouvez les mettre en pause ou les virer (remboursement 50%).
+          </p>
+          <div id="hired-employees" class="hired-employees-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pests Modal -->
+  <div id="pests-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🐛 Nuisibles & Maladies</h2>
+        <button class="modal-close" id="close-pests">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="pests-tabs">
+          <button class="pests-tab active" data-pest-tab="overview">Vue d'ensemble</button>
+          <button class="pests-tab" data-pest-tab="treatments">Traitements</button>
+        </div>
+
+        <div id="pests-overview-tab" class="pests-content active">
+          <div id="pests-overview"></div>
+        </div>
+
+        <div id="pests-treatments-tab" class="pests-content">
+          <p class="pests-description">
+            Protégez votre jardin avec ces traitements efficaces!
+          </p>
+          <div id="treatments-list" class="treatments-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customization Modal -->
+  <div id="customization-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🎨 Personnalisation</h2>
+        <button class="modal-close" id="close-customization">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="customization-tabs">
+          <button class="customization-tab active" data-custom-tab="themes">Thèmes</button>
+          <button class="customization-tab" data-custom-tab="borders">Bordures</button>
+          <button class="customization-tab" data-custom-tab="backgrounds">Arrière-plans</button>
+          <button class="customization-tab" data-custom-tab="decorations">Décorations</button>
+        </div>
+
+        <div id="customization-themes-tab" class="customization-content active">
+          <p class="customization-description">
+            Changez l'apparence de votre jardin avec ces thèmes de couleurs
+          </p>
+          <div id="themes-list" class="themes-list"></div>
+        </div>
+
+        <div id="customization-borders-tab" class="customization-content">
+          <p class="customization-description">
+            Ajoutez une bordure élégante autour de votre jardin
+          </p>
+          <div id="borders-list" class="borders-list"></div>
+        </div>
+
+        <div id="customization-backgrounds-tab" class="customization-content">
+          <p class="customization-description">
+            Personnalisez l'arrière-plan de votre écran
+          </p>
+          <div id="backgrounds-list" class="backgrounds-list"></div>
+        </div>
+
+        <div id="customization-decorations-tab" class="customization-content">
+          <p class="customization-description">
+            Décorez votre jardin avec des objets cosmétiques
+          </p>
+          <div id="decorations-list" class="decorations-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lights Modal -->
+  <div id="lights-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>💡 Lumières du Jardin</h2>
+        <button class="modal-close" id="close-lights">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="customization-description">
+          Illuminez votre jardin la nuit pour annuler le malus de croissance!
+        </p>
+        <div id="lights-list" class="lights-list"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="inventory-system.js"></script>
+  <script src="employees-system.js"></script>
+  <script src="pests-system.js"></script>
+  <script src="new-buildings.js"></script>
+  <script src="customization-system.js"></script>
+  <script src="game.js"></script>
+  <script src="inventory-ui.js"></script>
+  <script src="employees-ui.js"></script>
+  <script src="pests-ui.js"></script>
+  <script src="customization-ui.js"></script>
+  <script src="garden-enhancements.js"></script>
+  <script src="settings-extended.js"></script>
+  <script src="day-night-system.js"></script>
+  <script src="day-night-ui.js"></script>
+  <script src="day-night-transition.js"></script>
+  <script src="employees-shop.js"></script>
+  <script src="admin.js"></script>
+  <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+  <script src="multiplayer-admin.js"></script>
+
+</body>
+
+</html>
+

@@ -1,0 +1,461 @@
+/* ============================================
+   DAY/NIGHT CYCLE STYLES
+   ============================================ */
+
+/* Indicateur jour/nuit dans le header */
+#day-night-indicator {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 1000;
+}
+
+.day-night-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.9));
+  border-radius: 20px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(5px);
+}
+
+.day-night-icon {
+  font-size: 1.5em;
+  animation: day-night-pulse 2s ease-in-out infinite;
+  line-height: 1;
+}
+
+@keyframes day-night-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.day-night-name {
+  font-weight: 700;
+  font-size: 0.9em;
+  color: var(--text-dark);
+  line-height: 1;
+}
+
+/* Thèmes selon l'heure */
+body[data-time="day"] {
+  --time-filter: brightness(1);
+}
+
+body[data-time="dusk"] {
+  --time-filter: brightness(0.8) sepia(0.3);
+}
+
+body[data-time="night"] {
+  --time-filter: brightness(0.6) saturate(0.8) hue-rotate(15deg);
+}
+
+body[data-time="dawn"] {
+  --time-filter: brightness(0.9) sepia(0.2);
+}
+
+/* Plantes nocturnes dans le shop */
+.nocturnal-plant {
+  position: relative;
+  border: 2px solid #9b59b6;
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(142, 68, 173, 0.1));
+}
+
+.nocturnal-plant.day-time {
+  opacity: 0.6;
+  filter: grayscale(0.5);
+}
+
+.plant-night-only {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8em;
+  color: #9b59b6;
+  font-weight: 600;
+  margin-top: 5px;
+  padding: 4px 8px;
+  background: rgba(155, 89, 182, 0.1);
+  border-radius: 6px;
+}
+
+.plant-prestige {
+  font-size: 0.8em;
+  color: var(--gold);
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+.nocturnal-locked {
+  text-align: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(142, 68, 173, 0.05));
+  border-radius: 15px;
+  border: 2px dashed #9b59b6;
+}
+
+.nocturnal-locked-icon {
+  font-size: 4em;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.nocturnal-locked-text {
+  font-size: 1.2em;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+}
+
+.nocturnal-locked-hint {
+  font-size: 0.9em;
+  color: var(--text-light);
+}
+
+/* Lumières */
+.light-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2em;
+  z-index: 10;
+  pointer-events: none;
+  animation: light-glow 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 0, 0.8));
+}
+
+@keyframes light-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px rgba(255, 255, 0, 0.8));
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(255, 255, 0, 1));
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+.light-remove-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: #e74c3c;
+  color: white;
+  font-size: 1em;
+  font-weight: 700;
+  cursor: pointer;
+  pointer-events: all;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+}
+
+.light-remove-btn:hover {
+  background: #c0392b;
+  transform: scale(1.2);
+}
+
+/* Zone éclairée */
+.plot.lit-area {
+  background: linear-gradient(135deg, #fffacd, #ffffe0) !important;
+  box-shadow: 0 0 15px rgba(255, 255, 0, 0.3) !important;
+}
+
+body[data-time="night"] .plot.lit-area {
+  box-shadow: 0 0 20px rgba(255, 255, 0, 0.5) !important;
+  animation: lit-pulse 2s ease-in-out infinite;
+}
+
+@keyframes lit-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(255, 255, 0, 0.4); }
+  50% { box-shadow: 0 0 25px rgba(255, 255, 0, 0.7); }
+}
+
+/* Parcelles disponibles pour lumières */
+.plot.light-placeable {
+  border: 3px solid #f39c12 !important;
+  box-shadow: 0 0 20px rgba(243, 156, 18, 0.6) !important;
+  cursor: pointer !important;
+  animation: pulse-yellow 1s infinite;
+}
+
+@keyframes pulse-yellow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(243, 156, 18, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(243, 156, 18, 0.9);
+  }
+}
+
+/* Modal des lumières */
+#lights-modal .modal-content {
+  max-width: 900px;
+}
+
+.lights-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+  padding: 10px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.light-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.9));
+  border: 2px solid rgba(243, 156, 18, 0.3);
+  border-radius: 16px;
+  padding: 15px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.light-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(243, 156, 18, 0.3);
+  border-color: var(--gold);
+}
+
+.light-icon {
+  font-size: 3em;
+  text-align: center;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.light-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.light-name {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.light-description {
+  font-size: 0.9em;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
+.light-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 5px;
+}
+
+.light-stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85em;
+}
+
+.light-stat-label {
+  color: var(--text-light);
+}
+
+.light-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.light-cost {
+  font-size: 1em;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(243, 156, 18, 0.1);
+}
+
+.light-cost.affordable {
+  color: var(--primary-green);
+  background: rgba(46, 204, 113, 0.1);
+}
+
+.light-cost.expensive {
+  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.light-place-btn {
+  flex: 1;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+  color: white;
+  font-weight: 700;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.light-place-btn:hover:not(.disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(243, 156, 18, 0.3);
+}
+
+.light-place-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #95a5a6;
+}
+
+/* Effet de nuit sur le jardin */
+body[data-time="night"] .garden {
+  box-shadow: inset 0 0 50px rgba(0, 0, 20, 0.5);
+}
+
+body[data-time="night"] .plot:not(.lit-area) {
+  filter: brightness(0.7);
+}
+
+/* Dark theme support */
+body[data-theme="dark"] .day-night-display {
+  background: linear-gradient(135deg, rgba(25, 32, 48, 0.95), rgba(19, 25, 38, 0.95));
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body[data-theme="dark"] .day-night-name {
+  color: #e6edf5;
+}
+
+/* Styles spéciaux pour la nuit */
+body[data-time="night"] .day-night-display {
+  background: linear-gradient(135deg, rgba(52, 73, 94, 0.95), rgba(44, 62, 80, 0.95));
+  border-color: #3498db;
+  box-shadow: 0 2px 12px rgba(52, 152, 219, 0.4);
+}
+
+body[data-time="night"] .day-night-name {
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .light-card {
+  background: linear-gradient(135deg, rgba(25, 32, 48, 0.95), rgba(19, 25, 38, 0.95));
+  border-color: rgba(243, 156, 18, 0.3);
+}
+
+body[data-theme="dark"] .light-name {
+  color: #e6edf5;
+}
+
+/* ============================================
+   DAY/NIGHT TRANSITION OVERLAY ANIMATION
+   ============================================ */
+
+.day-night-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  pointer-events: none;
+  transition: background 1s ease-in-out;
+}
+
+.day-night-transition-overlay.show {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.transition-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  opacity: 0;
+  transform: scale(0.5) rotate(-180deg);
+  transition: all 1s ease-out;
+}
+
+.day-night-transition-overlay.show .transition-content {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.transition-icon {
+  font-size: 8em;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.8),
+               0 0 60px rgba(255, 255, 255, 0.5);
+  animation: icon-pulse 2s ease-in-out infinite;
+}
+
+.transition-text {
+  font-size: 2.5em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+@keyframes icon-pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.1);
+    filter: brightness(1.3);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .day-night-display {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .day-night-icon {
+    font-size: 1.5em;
+  }
+
+  .lights-list {
+    grid-template-columns: 1fr;
+    max-height: 400px;
+  }
+
+  .light-card {
+    padding: 12px;
+  }
+
+  .light-icon {
+    font-size: 2.5em;
+  }
+
+  .transition-icon {
+    font-size: 5em;
+  }
+
+  .transition-text {
+    font-size: 1.5em;
+  }
+}
