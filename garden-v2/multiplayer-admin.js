@@ -545,7 +545,7 @@ function adminSetPrestigeLevel(targetPlayerId, level) {
 
 function adminResetSave(targetPlayerId) {
   if (!multiplayerState.isAdmin) {
-    showToast('❌ Acces admin requis', 'error');
+    showToast('? Acces admin requis', 'error');
     return;
   }
 
@@ -554,7 +554,8 @@ function adminResetSave(targetPlayerId) {
     targetId: targetPlayerId
   });
 
-  showToast('♻️ Reset envoye', 'warning');
+  showToast('?? Reset envoye', 'warning');
+}
 
 function adminForceNight(targetPlayerId) {
   if (!multiplayerState.isAdmin) {
