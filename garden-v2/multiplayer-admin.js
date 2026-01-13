@@ -926,6 +926,7 @@ function openAdminMultiplayerPanel() {
   const modalElement = document.getElementById('admin-multiplayer-modal');
   if (modalElement) {
     modalElement.classList.add('show');
+    sendPlayerUpdate();
     renderAdminPlayersList();
   }
 }
@@ -1174,6 +1175,19 @@ setInterval(() => {
     sendPlayerUpdate();
   }
 }, 5000); // Toutes les 5 secondes
+
+// Rafraichir quand l'onglet redevient actif
+window.addEventListener('focus', () => {
+  if (multiplayerState.connected) {
+    sendPlayerUpdate();
+  }
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && multiplayerState.connected) {
+    sendPlayerUpdate();
+  }
+});
 
 // Exposer les fonctions globalement
 window.initMultiplayer = initMultiplayer;
