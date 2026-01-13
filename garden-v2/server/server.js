@@ -75,6 +75,20 @@ io.on("connection", (socket) => {
     return;
   }
 
+  // Seed a placeholder entry so admins can see connected sockets
+  if (!players.has(socket.id)) {
+    players.set(socket.id, {
+      id: socket.id,
+      name: "Player",
+      coins: 0,
+      level: 1,
+      prestigeLevel: 0,
+      totalPlants: 0,
+      season: "spring",
+      weather: "sun"
+    });
+  }
+
   socket.on("player-update", (data = {}) => {
     const player = normalizePlayer(socket.id, data);
     players.set(socket.id, player);
