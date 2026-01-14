@@ -27,6 +27,15 @@ const admins = new Set();
 
 const bannedIps = new Set();
 
+// Server statistics
+const serverStats = {
+  startTime: Date.now(),
+  totalConnections: 0,
+  totalDisconnections: 0,
+  adminActions: 0,
+  peakPlayers: 0
+};
+
 const allowedWeather = new Set(["sun", "rain", "cloud", "storm", "frost"]);
 const allowedSeason = new Set(["spring", "summer", "autumn", "winter"]);
 
@@ -75,6 +84,12 @@ io.on("connection", (socket) => {
     return;
   }
 
+  // Update statistics
+  serverStats.totalConnections++;
+  if (players.size + 1 > serverStats.peakPlayers) {
+    serverStats.peakPlayers = players.size + 1;
+  }
+
   // Seed a placeholder entry so admins can see connected sockets
   if (!players.has(socket.id)) {
     players.set(socket.id, {
@@ -85,7 +100,8 @@ io.on("connection", (socket) => {
       prestigeLevel: 0,
       totalPlants: 0,
       season: "spring",
-      weather: "sun"
+      weather: "sun",
+      connectedAt: Date.now()
     });
     emitPlayersList();
   }
@@ -115,6 +131,20 @@ io.on("connection", (socket) => {
     socket.emit("players-list", list);
   });
 
+  socket.on("admin-request-stats", () => {
+    if (!admins.has(socket.id)) {
+      socket.emit("admin-error", "Admin access required");
+      return;
+    }
+    const stats = {
+      ...serverStats,
+      uptime: Date.now() - serverStats.startTime,
+      activePlayers: players.size,
+      activeAdmins: admins.size
+    };
+    socket.emit("server-stats", stats);
+  });
+
 
 
   socket.on("admin-action", (payload = {}) => {
@@ -122,6 +152,9 @@ io.on("connection", (socket) => {
       socket.emit("admin-error", "Admin access required");
       return;
     }
+
+    // Increment admin actions counter
+    serverStats.adminActions++;
 
     const type = payload.type;
     const targetId = payload.targetId;
@@ -388,6 +421,7 @@ io.on("connection", (socket) => {
 
 
   socket.on("disconnect", () => {
+    serverStats.totalDisconnections++;
     players.delete(socket.id);
     admins.delete(socket.id);
     emitPlayersList();

@@ -18,7 +18,10 @@ const multiplayerState = {
   playerId: null,
   players: [],
   adminMode: false,
-  selectedTargetId: null
+  selectedTargetId: null,
+  serverStats: null,
+  actionHistory: [],
+  maxHistorySize: 50
 };
 
 // ============================================
@@ -86,7 +89,14 @@ function initMultiplayer() {
     multiplayerState.players = players;
     if (multiplayerState.isAdmin) {
       renderAdminPlayersList();
+      updateServerStatsDisplay();
     }
+  });
+
+  // Recevoir les statistiques du serveur
+  multiplayerState.socket.on('server-stats', (stats) => {
+    multiplayerState.serverStats = stats;
+    updateServerStatsDisplay();
   });
 
   // Recevoir des cadeaux d'admin
@@ -100,6 +110,8 @@ function initMultiplayer() {
     if (typeof showToast === 'function') {
       showToast('👑 Mode Admin activé', 'success');
     }
+    // Request initial stats
+    requestServerStats();
     openAdminMultiplayerPanel();
   });
 
@@ -114,7 +126,34 @@ function initMultiplayer() {
   multiplayerState.socket.on('connect_error', (error) => {
     console.error('❌ Erreur de connexion:', error);
     if (typeof showToast === 'function') {
-      showToast('❌ Erreur de connexion au serveur', 'error');
+      showToast('❌ Impossible de se connecter au serveur', 'error');
+    }
+  });
+
+  multiplayerState.socket.on('reconnect', (attemptNumber) => {
+    console.log('✅ Reconnecté après', attemptNumber, 'tentatives');
+    if (typeof showToast === 'function') {
+      showToast('✅ Reconnecté au serveur', 'success');
+    }
+    sendPlayerUpdate();
+    if (multiplayerState.isAdmin) {
+      requestPlayersList();
+      requestServerStats();
+    }
+  });
+
+  multiplayerState.socket.on('reconnect_attempt', () => {
+    console.log('🔄 Tentative de reconnexion...');
+  });
+
+  multiplayerState.socket.on('reconnect_error', (error) => {
+    console.error('❌ Erreur de reconnexion:', error);
+  });
+
+  multiplayerState.socket.on('reconnect_failed', () => {
+    console.error('❌ Échec de reconnexion');
+    if (typeof showToast === 'function') {
+      showToast('❌ Impossible de se reconnecter. Rechargez la page.', 'error');
     }
   });
 
@@ -319,6 +358,42 @@ function requestPlayersList() {
   multiplayerState.socket.emit('admin-request-players');
 }
 
+function requestServerStats() {
+  if (!multiplayerState.connected || !multiplayerState.socket) return;
+  multiplayerState.socket.emit('admin-request-stats');
+}
+
+function logAdminAction(action, details = '') {
+  const log = {
+    timestamp: Date.now(),
+    action,
+    details,
+    time: new Date().toLocaleTimeString()
+  };
+  multiplayerState.actionHistory.unshift(log);
+  if (multiplayerState.actionHistory.length > multiplayerState.maxHistorySize) {
+    multiplayerState.actionHistory.pop();
+  }
+  updateActionHistoryDisplay();
+}
+
+function getPlayerName(playerId) {
+  const player = multiplayerState.players.find(p => p.id === playerId);
+  return player ? player.name : 'Unknown';
+}
+
+function formatUptime(ms) {
+  const seconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) return `${days}j ${hours % 24}h`;
+  if (hours > 0) return `${hours}h ${minutes % 60}m`;
+  if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+  return `${seconds}s`;
+}
+
 // ============================================
 // ACTIONS ADMIN
 // ============================================
@@ -335,6 +410,8 @@ function adminSendCoins(targetPlayerId, amount) {
     amount: amount
   });
 
+  const playerName = getPlayerName(targetPlayerId);
+  logAdminAction('💰 Send Coins', `${amount} → ${playerName}`);
   showToast(`💰 ${amount} coins envoyés`, 'success');
 }
 
@@ -350,6 +427,8 @@ function adminChangeWeather(targetPlayerId, weather) {
     weather: weather
   });
 
+  const playerName = getPlayerName(targetPlayerId);
+  logAdminAction('🌤️ Change Weather', `${weather} → ${playerName}`);
   showToast(`🌤️ Météo changée: ${weather}`, 'success');
 }
 
@@ -379,6 +458,7 @@ function adminBroadcast(message) {
     message: message
   });
 
+  logAdminAction('📢 Broadcast', message.slice(0, 30) + (message.length > 30 ? '...' : ''));
   showToast('📢 Message diffusé', 'success');
 }
 
@@ -395,6 +475,8 @@ function adminKickPlayer(targetPlayerId) {
     targetId: targetPlayerId
   });
 
+  const playerName = getPlayerName(targetPlayerId);
+  logAdminAction('🚫 Kick Player', playerName);
   showToast('🚫 Joueur expulsé', 'warning');
 }
 
@@ -960,7 +1042,10 @@ function openAdminMultiplayerPanel() {
     modalElement.classList.add('show');
     sendPlayerUpdate();
     requestPlayersList();
+    requestServerStats();
     renderAdminPlayersList();
+    updateServerStatsDisplay();
+    updateActionHistoryDisplay();
   }
 }
 
@@ -976,15 +1061,45 @@ function createAdminMultiplayerModal() {
   modal.id = 'admin-multiplayer-modal';
   modal.className = 'modal';
   modal.innerHTML = `
-    <div class="modal-content" style="max-width: 900px;">
+    <div class="modal-content" style="max-width: 1200px;">
       <div class="modal-header">
         <h2>👑 Panel Admin Multiplayer</h2>
         <button class="modal-close" onclick="closeAdminMultiplayerPanel()">&times;</button>
       </div>
-      <div class="modal-body" style="max-height: 600px; overflow-y: auto;">
+      <div class="modal-body" style="max-height: 700px; overflow-y: auto;">
+        <!-- Server Statistics -->
+        <div id="admin-server-stats" style="margin-bottom: 20px;"></div>
+
+        <!-- Quick Actions -->
+        <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(142, 68, 173, 0.05)); border-radius: 12px; border: 2px solid rgba(155, 89, 182, 0.3);">
+          <h3 style="margin: 0 0 12px 0; color: #9b59b6;">⚡ Actions Rapides</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px;">
+            <button class="btn" onclick="quickActionWelcomeAll()" style="background: #1abc9c; font-size: 0.9em; padding: 8px;">
+              🎁 Bienvenue à Tous
+            </button>
+            <button class="btn" onclick="quickActionSunnyAll()" style="background: #f39c12; font-size: 0.9em; padding: 8px;">
+              ☀️ Soleil pour Tous
+            </button>
+            <button class="btn" onclick="quickActionNightAll()" style="background: #34495e; color: white; font-size: 0.9em; padding: 8px;">
+              🌙 Nuit pour Tous
+            </button>
+            <button class="btn" onclick="requestServerStats()" style="background: #3498db; font-size: 0.9em; padding: 8px;">
+              🔄 Rafraîchir Stats
+            </button>
+          </div>
+        </div>
+
+        <!-- Players List -->
         <div id="admin-players-list"></div>
 
-        <div style="margin-top: 30px; padding: 20px; background: rgba(52, 152, 219, 0.1); border-radius: 12px; border: 2px solid #3498db;">
+        <!-- Action History -->
+        <div style="margin-top: 20px; padding: 15px; background: rgba(52, 152, 219, 0.05); border-radius: 12px; border: 2px solid rgba(52, 152, 219, 0.2);">
+          <h3 style="margin: 0 0 12px 0; color: #3498db;">📜 Historique des Actions</h3>
+          <div id="admin-action-history" style="max-height: 200px; overflow-y: auto; font-size: 0.85em;"></div>
+        </div>
+
+        <!-- Broadcast Message -->
+        <div style="margin-top: 20px; padding: 20px; background: rgba(52, 152, 219, 0.1); border-radius: 12px; border: 2px solid #3498db;">
           <h3 style="margin-top: 0;">📢 Message Global</h3>
           <div style="display: flex; gap: 10px;">
             <input
@@ -1155,6 +1270,114 @@ function sendBroadcast() {
   input.value = '';
 }
 
+function updateServerStatsDisplay() {
+  const container = document.getElementById('admin-server-stats');
+  if (!container) return;
+
+  const stats = multiplayerState.serverStats;
+  if (!stats) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 20px; color: var(--text-light);">
+        <p>Chargement des statistiques...</p>
+      </div>
+    `;
+    return;
+  }
+
+  const uptime = formatUptime(stats.uptime || 0);
+  const activePlayers = stats.activePlayers || 0;
+  const peakPlayers = stats.peakPlayers || 0;
+  const totalConns = stats.totalConnections || 0;
+  const totalDisconns = stats.totalDisconnections || 0;
+  const adminActions = stats.adminActions || 0;
+
+  container.innerHTML = `
+    <div style="background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(39, 174, 96, 0.05)); border-radius: 12px; padding: 15px; border: 2px solid rgba(46, 204, 113, 0.3);">
+      <h3 style="margin: 0 0 12px 0; color: #2ecc71;">📊 Statistiques du Serveur</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; font-size: 0.9em;">
+        <div style="background: rgba(255,255,255,0.6); padding: 10px; border-radius: 8px; text-align: center;">
+          <div style="color: #27ae60; font-weight: bold; font-size: 1.4em;">${activePlayers}</div>
+          <div style="color: var(--text-light); font-size: 0.85em;">👥 Joueurs Actifs</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.6); padding: 10px; border-radius: 8px; text-align: center;">
+          <div style="color: #e74c3c; font-weight: bold; font-size: 1.4em;">${peakPlayers}</div>
+          <div style="color: var(--text-light); font-size: 0.85em;">📈 Pic Joueurs</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.6); padding: 10px; border-radius: 8px; text-align: center;">
+          <div style="color: #3498db; font-weight: bold; font-size: 1.4em;">${uptime}</div>
+          <div style="color: var(--text-light); font-size: 0.85em;">⏱️ Uptime</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.6); padding: 10px; border-radius: 8px; text-align: center;">
+          <div style="color: #9b59b6; font-weight: bold; font-size: 1.4em;">${totalConns}</div>
+          <div style="color: var(--text-light); font-size: 0.85em;">🔌 Connexions</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.6); padding: 10px; border-radius: 8px; text-align: center;">
+          <div style="color: #f39c12; font-weight: bold; font-size: 1.4em;">${totalDisconns}</div>
+          <div style="color: var(--text-light); font-size: 0.85em;">💤 Déconnexions</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.6); padding: 10px; border-radius: 8px; text-align: center;">
+          <div style="color: #e67e22; font-weight: bold; font-size: 1.4em;">${adminActions}</div>
+          <div style="color: var(--text-light); font-size: 0.85em;">⚡ Actions Admin</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function updateActionHistoryDisplay() {
+  const container = document.getElementById('admin-action-history');
+  if (!container) return;
+
+  if (multiplayerState.actionHistory.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 20px; color: var(--text-light);">
+        Aucune action pour le moment
+      </div>
+    `;
+    return;
+  }
+
+  const logs = multiplayerState.actionHistory.slice(0, 10).map(log => `
+    <div style="padding: 8px; background: rgba(255,255,255,0.5); border-radius: 6px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <span style="font-weight: bold;">${log.action}</span>
+        ${log.details ? `<span style="color: var(--text-light); margin-left: 8px;">${log.details}</span>` : ''}
+      </div>
+      <div style="color: var(--text-light); font-size: 0.85em; white-space: nowrap;">${log.time}</div>
+    </div>
+  `).join('');
+
+  container.innerHTML = logs;
+}
+
+// Quick Actions
+function quickActionWelcomeAll() {
+  multiplayerState.players.forEach(player => {
+    if (player.id !== multiplayerState.playerId) {
+      adminAdjustCoins(player.id, 1000);
+      adminSendSeedsAll(player.id, 5);
+    }
+  });
+  adminBroadcast('🎁 Bienvenue! Voici 1000 coins et des graines pour commencer!');
+  logAdminAction('🎁 Welcome All', `${multiplayerState.players.length} joueurs`);
+}
+
+function quickActionSunnyAll() {
+  multiplayerState.players.forEach(player => {
+    adminChangeWeather(player.id, 'sun');
+  });
+  logAdminAction('☀️ Sunny All', `${multiplayerState.players.length} joueurs`);
+  showToast('☀️ Soleil pour tous les joueurs', 'success');
+}
+
+function quickActionNightAll() {
+  multiplayerState.players.forEach(player => {
+    adminForceNight(player.id);
+  });
+  logAdminAction('🌙 Night All', `${multiplayerState.players.length} joueurs`);
+  showToast('🌙 Nuit pour tous les joueurs', 'success');
+}
+
 // ============================================
 // BOUTON ADMIN DANS LE PANEL
 // ============================================
@@ -1231,6 +1454,11 @@ document.addEventListener('DOMContentLoaded', () => {
 setInterval(() => {
   if (multiplayerState.connected) {
     sendPlayerUpdate();
+    // Refresh stats if admin panel is open
+    const modal = document.getElementById('admin-multiplayer-modal');
+    if (modal && modal.classList.contains('show') && multiplayerState.isAdmin) {
+      requestServerStats();
+    }
   }
 }, 5000); // Toutes les 5 secondes
 
@@ -1278,6 +1506,12 @@ window.closeAdminMultiplayerPanel = closeAdminMultiplayerPanel;
 window.sendBroadcast = sendBroadcast;
 window.getNumberInputValue = getNumberInputValue;
 window.getSelectValue = getSelectValue;
+window.requestServerStats = requestServerStats;
+window.updateServerStatsDisplay = updateServerStatsDisplay;
+window.updateActionHistoryDisplay = updateActionHistoryDisplay;
+window.quickActionWelcomeAll = quickActionWelcomeAll;
+window.quickActionSunnyAll = quickActionSunnyAll;
+window.quickActionNightAll = quickActionNightAll;
 
 console.log('✅ Multiplayer Admin system loaded (client)');
 
