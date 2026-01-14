@@ -26,7 +26,14 @@ const multiplayerState = {
 // ============================================
 
 function initMultiplayer() {
+  console.log('🔵 initMultiplayer() appelé', {
+    hasSocket: !!multiplayerState.socket,
+    enabled: SERVER_CONFIG.enabled,
+    serverUrl: SERVER_CONFIG.serverUrl
+  });
+
   if (multiplayerState.socket) {
+    console.log('⚠️ Socket déjà existant');
     return;
   }
   if (!SERVER_CONFIG.enabled) {
@@ -37,11 +44,20 @@ function initMultiplayer() {
   // Vérifier si Socket.IO est disponible
   if (typeof io === 'undefined') {
     console.error('❌ Socket.IO non disponible. Incluez <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>');
+    if (typeof showToast === 'function') {
+      showToast('❌ Socket.IO non chargé', 'error');
+    }
     return;
   }
 
+  console.log('🔵 Connexion au serveur:', SERVER_CONFIG.serverUrl);
   // Se connecter au serveur
-  multiplayerState.socket = io(SERVER_CONFIG.serverUrl);
+  multiplayerState.socket = io(SERVER_CONFIG.serverUrl, {
+    transports: ['websocket', 'polling'],
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionAttempts: 10
+  });
 
   multiplayerState.socket.on('connect', () => {
     console.log('✅ Connecté au serveur multiplayer');
@@ -89,9 +105,21 @@ function initMultiplayer() {
 
   // Erreur d'authentification
   multiplayerState.socket.on('admin-error', (message) => {
+    console.log('❌ Erreur admin:', message);
     if (typeof showToast === 'function') {
       showToast(`❌ ${message}`, 'error');
     }
+  });
+
+  multiplayerState.socket.on('connect_error', (error) => {
+    console.error('❌ Erreur de connexion:', error);
+    if (typeof showToast === 'function') {
+      showToast('❌ Erreur de connexion au serveur', 'error');
+    }
+  });
+
+  multiplayerState.socket.on('error', (error) => {
+    console.error('❌ Erreur socket:', error);
   });
 }
 
@@ -1147,6 +1175,12 @@ document.addEventListener('DOMContentLoaded', () => {
       adminBody.appendChild(multiplayerRow);
 
       document.getElementById('admin-multiplayer-connect')?.addEventListener('click', () => {
+        console.log('🔵 Bouton multiplayer cliqué', {
+          enabled: SERVER_CONFIG.enabled,
+          connected: multiplayerState.connected,
+          isAdmin: multiplayerState.isAdmin
+        });
+
         if (!SERVER_CONFIG.enabled) {
           const enable = confirm('Activer le mode multiplayer?\n\nVous devez avoir un serveur configuré.');
           if (enable) {
@@ -1157,16 +1191,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!multiplayerState.connected) {
-          showToast('❌ Non connecté au serveur', 'error');
+          console.log('❌ Tentative de connexion...');
+          if (typeof showToast === 'function') {
+            showToast('❌ Non connecté au serveur. Tentative de connexion...', 'error');
+          }
+          // Essayer de se connecter
+          initMultiplayer();
+          // Attendre un peu et réessayer
+          setTimeout(() => {
+            if (multiplayerState.connected) {
+              if (typeof showToast === 'function') {
+                showToast('✅ Connecté! Cliquez à nouveau.', 'success');
+              }
+            } else {
+              if (typeof showToast === 'function') {
+                showToast('❌ Impossible de se connecter au serveur.', 'error');
+              }
+            }
+          }, 2000);
           return;
         }
 
         if (!multiplayerState.isAdmin) {
           const password = prompt('Mot de passe admin:');
+          console.log('🔑 Authentification admin...');
           if (password) {
             authenticateAdmin(password);
           }
         } else {
+          console.log('✅ Ouverture du panel admin');
           openAdminMultiplayerPanel();
         }
       });
@@ -1223,5 +1276,19 @@ window.adminUnbanAll = adminUnbanAll;
 window.setAdminTarget = setAdminTarget;
 window.closeAdminMultiplayerPanel = closeAdminMultiplayerPanel;
 window.sendBroadcast = sendBroadcast;
+window.getNumberInputValue = getNumberInputValue;
+window.getSelectValue = getSelectValue;
 
 console.log('✅ Multiplayer Admin system loaded (client)');
+
+// Auto-connect si activé
+if (SERVER_CONFIG.enabled) {
+  // Attendre que la page soit chargée
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => initMultiplayer(), 500);
+    });
+  } else {
+    setTimeout(() => initMultiplayer(), 500);
+  }
+}
