@@ -11,38 +11,38 @@
 // === DATA ===
 
 const PLANTS = [
+  // Début rapide pour donner l'impression de progression, puis ça ralentit
+  { id: 'grass', name: 'Herbe', cost: 5, growTime: 5, yield: 8, unlock: 0, rarity: 1, category: 'plante', size: 1 },
 
-  { id: 'grass', name: 'Herbe', cost: 10, growTime: 6, yield: 12, unlock: 0, rarity: 1, category: 'plante', size: 1 },
+  { id: 'flower', name: 'Fleur', cost: 15, growTime: 12, yield: 20, unlock: 50, rarity: 0.8, category: 'plante', size: 1 },
 
-  { id: 'flower', name: 'Fleur', cost: 25, growTime: 12, yield: 30, unlock: 100, rarity: 0.8, category: 'plante', size: 1 },
+  { id: 'carrot', name: 'Carotte', cost: 40, growTime: 25, yield: 50, unlock: 200, rarity: 0.6, category: 'legume', size: 1 },
 
-  { id: 'carrot', name: 'Carotte', cost: 60, growTime: 20, yield: 70, unlock: 300, rarity: 0.6, category: 'legume', size: 1 },
+  { id: 'strawberry', name: 'Fraise', cost: 100, growTime: 40, yield: 130, unlock: 600, rarity: 0.4, category: 'fruit', size: 1 },
 
-  { id: 'strawberry', name: 'Fraise', cost: 150, growTime: 30, yield: 180, unlock: 800, rarity: 0.4, category: 'fruit', size: 1 },
+  { id: 'corn', name: 'Mais', cost: 250, growTime: 60, yield: 320, unlock: 1500, rarity: 0.3, category: 'legume', size: 2, orientation: 'vertical' },
 
-  { id: 'corn', name: 'Mais', cost: 350, growTime: 45, yield: 450, unlock: 2000, rarity: 0.3, category: 'legume', size: 2, orientation: 'vertical' },
+  { id: 'watermelon', name: 'Pasteque', cost: 600, growTime: 90, yield: 780, unlock: 4000, rarity: 0.2, category: 'fruit', size: 2, orientation: 'horizontal' },
 
-  { id: 'watermelon', name: 'Pasteque', cost: 800, growTime: 70, yield: 1100, unlock: 5000, rarity: 0.2, category: 'fruit', size: 2, orientation: 'horizontal' },
+  { id: 'pumpkin', name: 'Citrouille', cost: 1500, growTime: 120, yield: 2000, unlock: 8000, rarity: 0.15, category: 'legume', size: 4, orientation: 'square' },
 
-  { id: 'pumpkin', name: 'Citrouille', cost: 2000, growTime: 90, yield: 3000, unlock: 10000, rarity: 0.15, category: 'legume', size: 4, orientation: 'square' },
+  { id: 'herb', name: 'Herbes', cost: 60, growTime: 22, yield: 80, unlock: 300, rarity: 0.7, category: 'plante', size: 1 },
 
-  { id: 'herb', name: 'Herbes', cost: 90, growTime: 18, yield: 120, unlock: 450, rarity: 0.7, category: 'plante', size: 1 },
+  { id: 'lavender', name: 'Lavande', cost: 100, growTime: 30, yield: 140, unlock: 500, rarity: 0.6, category: 'plante', size: 1 },
 
-  { id: 'lavender', name: 'Lavande', cost: 140, growTime: 26, yield: 210, unlock: 700, rarity: 0.6, category: 'plante', size: 1 },
+  { id: 'sunflower', name: 'Tournesol', cost: 180, growTime: 45, yield: 280, unlock: 1000, rarity: 0.45, category: 'plante', size: 2, orientation: 'vertical' },
 
-  { id: 'sunflower', name: 'Tournesol', cost: 260, growTime: 36, yield: 420, unlock: 1300, rarity: 0.45, category: 'plante', size: 2, orientation: 'vertical' },
+  { id: 'blueberry', name: 'Myrtille', cost: 200, growTime: 45, yield: 300, unlock: 1200, rarity: 0.45, category: 'fruit', size: 1 },
 
-  { id: 'blueberry', name: 'Myrtille', cost: 280, growTime: 35, yield: 460, unlock: 1500, rarity: 0.45, category: 'fruit', size: 1 },
+  { id: 'orange', name: 'Orange', cost: 400, growTime: 65, yield: 580, unlock: 2000, rarity: 0.35, category: 'fruit', size: 1 },
 
-  { id: 'orange', name: 'Orange', cost: 520, growTime: 50, yield: 900, unlock: 2500, rarity: 0.35, category: 'fruit', size: 1 },
+  { id: 'peach', name: 'Peche', cost: 700, growTime: 90, yield: 1000, unlock: 3500, rarity: 0.28, category: 'fruit', size: 2, orientation: 'horizontal' },
 
-  { id: 'peach', name: 'Peche', cost: 900, growTime: 70, yield: 1600, unlock: 4000, rarity: 0.28, category: 'fruit', size: 2, orientation: 'horizontal' },
+  { id: 'tomato', name: 'Tomate', cost: 150, growTime: 35, yield: 200, unlock: 700, rarity: 0.55, category: 'legume', size: 1 },
 
-  { id: 'tomato', name: 'Tomate', cost: 200, growTime: 30, yield: 320, unlock: 900, rarity: 0.55, category: 'legume', size: 1 },
+  { id: 'onion', name: 'Oignon', cost: 240, growTime: 50, yield: 340, unlock: 1200, rarity: 0.5, category: 'legume', size: 1 },
 
-  { id: 'onion', name: 'Oignon', cost: 320, growTime: 40, yield: 520, unlock: 1500, rarity: 0.5, category: 'legume', size: 1 },
-
-  { id: 'eggplant', name: 'Aubergine', cost: 650, growTime: 60, yield: 1100, unlock: 3000, rarity: 0.35, category: 'legume', size: 2, orientation: 'vertical' },
+  { id: 'eggplant', name: 'Aubergine', cost: 500, growTime: 75, yield: 720, unlock: 2500, rarity: 0.35, category: 'legume', size: 2, orientation: 'vertical' },
 
 ];
 
@@ -130,25 +130,25 @@ const GARDEN_UPGRADES = [
 
 const ACHIEVEMENTS = [
 
-  { id: 'first_harvest', name: '\uD83C\uDF31 Premi\u00E8re R\u00E9colte', desc: 'R\u00E9colter votre premi\u00E8re plante', check: (s) => s.totalHarvests >= 1, reward: 10 },
+  { id: 'first_harvest', name: '\uD83C\uDF31 Premi\u00E8re R\u00E9colte', desc: 'R\u00E9colter votre premi\u00E8re plante', check: (s) => s.totalHarvests >= 1, reward: 5 },
 
-  { id: 'harvest_10', name: '\uD83C\uDF3E Jardinier Amateur', desc: 'R\u00E9colter 10 plantes', check: (s) => s.totalHarvests >= 10, reward: 50 },
+  { id: 'harvest_10', name: '\uD83C\uDF3E Jardinier Amateur', desc: 'R\u00E9colter 10 plantes', check: (s) => s.totalHarvests >= 10, reward: 15 },
 
-  { id: 'harvest_50', name: '\uD83C\uDF3B Jardinier Confirm\u00E9', desc: 'R\u00E9colter 50 plantes', check: (s) => s.totalHarvests >= 50, reward: 200 },
+  { id: 'harvest_50', name: '\uD83C\uDF3B Jardinier Confirm\u00E9', desc: 'R\u00E9colter 50 plantes', check: (s) => s.totalHarvests >= 50, reward: 40 },
 
-  { id: 'harvest_100', name: '\uD83C\uDF33 Ma\u00EEtre Jardinier', desc: 'R\u00E9colter 100 plantes', check: (s) => s.totalHarvests >= 100, reward: 500 },
+  { id: 'harvest_100', name: '\uD83C\uDF33 Ma\u00EEtre Jardinier', desc: 'R\u00E9colter 100 plantes', check: (s) => s.totalHarvests >= 100, reward: 80 },
 
-  { id: 'coins_100', name: '\uD83D\uDCB0 Premi\u00E8re Fortune', desc: 'Atteindre 100 coins', check: (s) => s.lifetimeCoins >= 100, reward: 20 },
+  { id: 'coins_100', name: '\uD83D\uDCB0 Premi\u00E8re Fortune', desc: 'Atteindre 100 coins', check: (s) => s.lifetimeCoins >= 100, reward: 5 },
 
-  { id: 'coins_1000', name: '\uD83D\uDC8E Riche', desc: 'Atteindre 1000 coins lifetime', check: (s) => s.lifetimeCoins >= 1000, reward: 100 },
+  { id: 'coins_1000', name: '\uD83D\uDC8E Riche', desc: 'Atteindre 1000 coins lifetime', check: (s) => s.lifetimeCoins >= 1000, reward: 20 },
 
-  { id: 'coins_10000', name: '\uD83D\uDC51 Millionaire', desc: 'Atteindre 10000 coins lifetime', check: (s) => s.lifetimeCoins >= 10000, reward: 1000 },
+  { id: 'coins_10000', name: '\uD83D\uDC51 Millionaire', desc: 'Atteindre 10000 coins lifetime', check: (s) => s.lifetimeCoins >= 10000, reward: 100 },
 
-  { id: 'first_building', name: '\uD83C\uDFD7\uFE0F Premier Building', desc: 'Acheter votre premier building', check: (s) => Object.values(s.owned.buildings).reduce((a,b) => a+b, 0) >= 1, reward: 50 },
+  { id: 'first_building', name: '\uD83C\uDFD7\uFE0F Premier Building', desc: 'Acheter votre premier building', check: (s) => Object.values(s.owned.buildings).reduce((a,b) => a+b, 0) >= 1, reward: 10 },
 
-  { id: 'expand_garden', name: '\uD83D\uDCD0 Expansion', desc: 'Agrandir le jardin \u00E0 4x4', check: (s) => s.garden.size >= 4, reward: 100 },
+  { id: 'expand_garden', name: '\uD83D\uDCD0 Expansion', desc: 'Agrandir le jardin \u00E0 4x4', check: (s) => s.garden.size >= 4, reward: 25 },
 
-  { id: 'watermelon', name: '\uD83C\uDF49 Luxe', desc: 'D\u00E9bloquer les past\u00E8ques', check: (s) => s.lifetimeCoins >= 5000, reward: 500 },
+  { id: 'watermelon', name: '\uD83C\uDF49 Luxe', desc: 'D\u00E9bloquer les past\u00E8ques', check: (s) => s.lifetimeCoins >= 5000, reward: 50 },
 
 ];
 
@@ -444,9 +444,9 @@ const SEASONS = [
 
     effects: {
 
-      growthSpeed: 1.2, // +20% growth speed
+      growthSpeed: 1.05, // +5% growth speed (réduit de 20%)
 
-      specialChance: 1.1, // +10% special plant chance
+      specialChance: 1.02, // +2% special plant chance (réduit de 10%)
 
       yieldBonus: 1.0
 
@@ -468,12 +468,11 @@ const SEASONS = [
 
       specialChance: 1.0,
 
-      yieldBonus: 1.15, // +15% yield
+      yieldBonus: 1.05, // +5% yield (réduit de 15%)
 
-      bonusPlants: ['watermelon', 'strawberry'], // Better rates for these
+      bonusPlants: ['watermelon', 'strawberry'],
 
-      seasonalSeeds: [{ id: 'watermelon', chance: 0.005, amount: 1 }]
-
+      seasonalSeeds: [{ id: 'watermelon', chance: 0.001, amount: 1 }] // Réduit de 0.005
     }
 
   },
@@ -488,11 +487,11 @@ const SEASONS = [
 
     effects: {
 
-      growthSpeed: 0.9, // -10% speed
+      growthSpeed: 0.85, // -15% speed (augmenté le malus)
 
       specialChance: 1.0,
 
-      yieldBonus: 1.25, // +25% yield - harvest season!
+      yieldBonus: 1.08, // +8% yield (réduit de 25%)
 
     }
 
@@ -508,17 +507,17 @@ const SEASONS = [
 
     effects: {
 
-      growthSpeed: 0.7, // -30% speed
+      growthSpeed: 0.6, // -40% speed (augmenté le malus)
 
       specialChance: 1.0,
 
-      yieldBonus: 0.5, // -50% yield for regular plants
+      yieldBonus: 0.4, // -60% yield for regular plants (augmenté le malus)
 
-      categoryYield: { fruit: 0.5, legume: 0.5 },
+      categoryYield: { fruit: 0.4, legume: 0.4 },
 
-      prestigeBoost: 2.0, // x2 for prestige plants
+      prestigeBoost: 1.3, // x1.3 for prestige plants (réduit de x2)
 
-      fastPlantBoost: 1.5 // +50% for fast plants
+      fastPlantBoost: 1.15 // +15% for fast plants (réduit de +50%)
 
     }
 
@@ -625,9 +624,9 @@ const DAILY_REWARDS = [
 
     day: 1,
 
-    coins: 50,
+    coins: 15,
 
-    seeds: 3,
+    seeds: 1,
 
     icon: '\uD83C\uDF81',
 
@@ -639,13 +638,13 @@ const DAILY_REWARDS = [
 
     day: 2,
 
-    coins: 100,
+    coins: 25,
 
-    seeds: 5,
+    seeds: 2,
 
     icon: '\uD83C\uDF81',
 
-    desc: 'Continue comme \u00E7a!'
+    desc: 'Continue comme ca!'
 
   },
 
@@ -653,13 +652,13 @@ const DAILY_REWARDS = [
 
     day: 3,
 
-    coins: 200,
+    coins: 40,
 
-    seeds: 8,
+    seeds: 2,
 
     icon: '\uD83C\uDF81',
 
-    desc: 'Bien jou\u00E9!'
+    desc: 'Bien joue!'
 
   },
 
@@ -667,13 +666,13 @@ const DAILY_REWARDS = [
 
     day: 4,
 
-    coins: 350,
+    coins: 60,
 
-    seeds: 12,
+    seeds: 3,
 
     icon: '\uD83D\uDC8E',
 
-    desc: 'Tu es d\u00E9vou\u00E9!'
+    desc: 'Tu es devoue!'
 
   },
 
@@ -681,13 +680,13 @@ const DAILY_REWARDS = [
 
     day: 5,
 
-    coins: 500,
+    coins: 80,
 
-    seeds: 15,
+    seeds: 3,
 
     icon: '\uD83D\uDC8E',
 
-    desc: 'Presque l\u00E0!'
+    desc: 'Presque la!'
 
   },
 
@@ -695,9 +694,9 @@ const DAILY_REWARDS = [
 
     day: 6,
 
-    coins: 750,
+    coins: 100,
 
-    seeds: 20,
+    seeds: 4,
 
     icon: '\uD83D\uDC8E',
 
@@ -709,15 +708,15 @@ const DAILY_REWARDS = [
 
     day: 7,
 
-    coins: 1500,
+    coins: 200,
 
-    seeds: 30,
+    seeds: 5,
 
     specialPlant: true,
 
     icon: '\uD83D\uDC51',
 
-    desc: 'JACKPOT! Plante sp\u00E9ciale garantie!'
+    desc: 'Plante speciale garantie!'
 
   }
 
@@ -6394,7 +6393,9 @@ function renderGarden() {
 
 
 
-  garden.style.gridTemplateColumns = `repeat(${state.garden.size}, 1fr)`;
+  // Utiliser la variable CSS pour la taille fixe des cases (85px)
+  garden.style.setProperty('--garden-size', state.garden.size);
+  garden.style.gridTemplateColumns = `repeat(${state.garden.size}, 85px)`;
 
 }
 

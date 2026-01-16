@@ -216,15 +216,21 @@ function autoPlanter_action(employee, empType) {
     .map((plot, idx) => ({ plot, idx }))
     .filter(({ plot }) =>
       !plot.plantId &&
-      !plot.building &&
+      !plot.buildingId &&
       !plot.isOccupied &&
-      plot.unlocked
+      plot.unlocked !== false
     );
 
   if (emptyPlots.length === 0) return; // Aucune parcelle vide
 
-  // Obtenir les graines disponibles
-  const availableSeeds = Object.entries(state.inventory).filter(([id, qty]) => qty > 0);
+  // Obtenir les graines disponibles (chercher dans state.seeds OU state.inventory)
+  let availableSeeds = [];
+  if (state.seeds && Object.keys(state.seeds).length > 0) {
+    availableSeeds = Object.entries(state.seeds).filter(([id, qty]) => qty > 0);
+  }
+  if (availableSeeds.length === 0 && state.inventory && Object.keys(state.inventory).length > 0) {
+    availableSeeds = Object.entries(state.inventory).filter(([id, qty]) => qty > 0);
+  }
   if (availableSeeds.length === 0) return; // Aucune graine
 
   // Choisir une graine aléatoire
@@ -247,7 +253,8 @@ function autoPlanter_action(employee, empType) {
   const plantsToPlace = Math.min(empType.stats.plantsPerAction + Math.floor(level / 3), emptyPlots.length, qty);
 
   for (let i = 0; i < plantsToPlace; i++) {
-    if (state.inventory[plantId] <= 0) break;
+    const seedStore = state.seeds && state.seeds[plantId] > 0 ? state.seeds : state.inventory;
+    if (!seedStore || seedStore[plantId] <= 0) break;
 
     const { idx } = emptyPlots[i];
 
@@ -263,14 +270,13 @@ function fastHarvester_action(employee, empType) {
   const level = employee.level;
   const bonusYield = 1 + (empType.stats.bonusYield * level);
 
-  // Trouver les plantes prêtes à récolter
+  // Trouver les plantes prêtes à récolter (vérifier plot.ready au lieu de readyAt)
   const readyPlots = state.garden.plots
     .map((plot, idx) => ({ plot, idx }))
     .filter(({ plot }) =>
       plot.plantId &&
-      !plot.isOccupied &&
-      plot.readyAt &&
-      plot.readyAt <= Date.now()
+      plot.ready === true &&
+      (plot.isMainPlot === true || plot.isMainPlot === undefined)
     );
 
   if (readyPlots.length === 0) return;
@@ -281,7 +287,13 @@ function fastHarvester_action(employee, empType) {
   for (let i = 0; i < harvestCount; i++) {
     const { idx, plot } = readyPlots[i];
 
-    // Trouver la plante
+    // Utiliser la fonction harvestPlot si disponible
+    if (typeof harvestPlot === 'function') {
+      harvestPlot(idx);
+      continue;
+    }
+
+    // Fallback: récolter manuellement
     let plant = null;
     if (typeof getPlantById === 'function') {
       plant = getPlantById(plot.plantId);
@@ -299,7 +311,7 @@ function fastHarvester_action(employee, empType) {
     const totalYield = Math.floor(baseYield * bonusYield);
 
     state.coins += totalYield;
-    state.stats.totalHarvests++;
+    state.totalHarvests = (state.totalHarvests || 0) + 1;
 
     // Ajouter à l'inventaire
     if (typeof addHarvestToInventory === 'function') {
@@ -309,11 +321,11 @@ function fastHarvester_action(employee, empType) {
     // Réinitialiser la parcelle
     plot.plantId = null;
     plot.plantedAt = null;
-    plot.readyAt = null;
+    plot.ready = false;
   }
 
   if (harvestCount > 0) {
-    showToast(`⚡ Récolteur: ${harvestCount} plante(s) récoltée(s)`);
+    showToast(`Recolteur: ${harvestCount} plante(s) recoltee(s)`);
     needsRender = true;
   }
 }
@@ -326,8 +338,7 @@ function seedCollector_action(employee, empType) {
   const availablePlants = typeof PLANTS !== 'undefined' ? PLANTS.filter(p => {
     // Seulement les plantes normales (pas légendaires)
     if (!p.id) return false;
-    const owned = state.inventory[p.id] || 0;
-    return owned > 0 || state.lifetimeCoins >= (p.unlock || 0);
+    return state.lifetimeCoins >= (p.unlock || 0);
   }) : [];
 
   if (availablePlants.length === 0) return;
@@ -337,11 +348,13 @@ function seedCollector_action(employee, empType) {
 
   for (let i = 0; i < seedsCount; i++) {
     const randomPlant = availablePlants[Math.floor(Math.random() * availablePlants.length)];
-    if (!state.inventory[randomPlant.id]) state.inventory[randomPlant.id] = 0;
-    state.inventory[randomPlant.id]++;
+    // Utiliser state.seeds au lieu de state.inventory
+    if (!state.seeds) state.seeds = {};
+    if (!state.seeds[randomPlant.id]) state.seeds[randomPlant.id] = 0;
+    state.seeds[randomPlant.id]++;
   }
 
-  showToast(`🌱 Collecteur: +${seedsCount} graine(s) générée(s)`);
+  showToast(`Collecteur: +${seedsCount} graine(s) generee(s)`);
   needsRender = true;
 }
 

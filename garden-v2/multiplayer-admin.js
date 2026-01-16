@@ -1059,32 +1059,32 @@ function closeAdminMultiplayerPanel() {
 function createAdminMultiplayerModal() {
   const modal = document.createElement('div');
   modal.id = 'admin-multiplayer-modal';
-  modal.className = 'modal';
+  modal.className = 'modal admin-multiplayer-modal';
   modal.innerHTML = `
-    <div class="modal-content" style="max-width: 1200px;">
+    <div class="modal-content admin-panel-content" style="max-width: 1400px; width: 95%;">
       <div class="modal-header">
-        <h2>👑 Panel Admin Multiplayer</h2>
+        <h2>Admin Panel Multiplayer</h2>
         <button class="modal-close" onclick="closeAdminMultiplayerPanel()">&times;</button>
       </div>
-      <div class="modal-body" style="max-height: 700px; overflow-y: auto;">
+      <div class="modal-body" style="max-height: 85vh; overflow-y: auto; padding: 25px;">
         <!-- Server Statistics -->
-        <div id="admin-server-stats" style="margin-bottom: 20px;"></div>
+        <div id="admin-server-stats" style="margin-bottom: 25px;"></div>
 
         <!-- Quick Actions -->
-        <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(142, 68, 173, 0.05)); border-radius: 12px; border: 2px solid rgba(155, 89, 182, 0.3);">
-          <h3 style="margin: 0 0 12px 0; color: #9b59b6;">⚡ Actions Rapides</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px;">
-            <button class="btn" onclick="quickActionWelcomeAll()" style="background: #1abc9c; font-size: 0.9em; padding: 8px;">
-              🎁 Bienvenue à Tous
+        <div class="admin-section" style="margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(142, 68, 173, 0.05)); border-radius: 16px; border: 2px solid rgba(155, 89, 182, 0.3);">
+          <h3 style="margin: 0 0 15px 0; color: #9b59b6; font-size: 1.2em;">Actions Rapides</h3>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+            <button class="btn" onclick="quickActionWelcomeAll()" style="background: #1abc9c; font-size: 0.95em; padding: 12px 16px; white-space: nowrap;">
+              Bienvenue a Tous
             </button>
-            <button class="btn" onclick="quickActionSunnyAll()" style="background: #f39c12; font-size: 0.9em; padding: 8px;">
-              ☀️ Soleil pour Tous
+            <button class="btn" onclick="quickActionSunnyAll()" style="background: #f39c12; font-size: 0.95em; padding: 12px 16px; white-space: nowrap;">
+              Soleil pour Tous
             </button>
-            <button class="btn" onclick="quickActionNightAll()" style="background: #34495e; color: white; font-size: 0.9em; padding: 8px;">
-              🌙 Nuit pour Tous
+            <button class="btn" onclick="quickActionNightAll()" style="background: #34495e; color: white; font-size: 0.95em; padding: 12px 16px; white-space: nowrap;">
+              Nuit pour Tous
             </button>
-            <button class="btn" onclick="requestServerStats()" style="background: #3498db; font-size: 0.9em; padding: 8px;">
-              🔄 Rafraîchir Stats
+            <button class="btn" onclick="requestServerStats()" style="background: #3498db; font-size: 0.95em; padding: 12px 16px; white-space: nowrap;">
+              Rafraichir Stats
             </button>
           </div>
         </div>
@@ -1093,23 +1093,23 @@ function createAdminMultiplayerModal() {
         <div id="admin-players-list"></div>
 
         <!-- Action History -->
-        <div style="margin-top: 20px; padding: 15px; background: rgba(52, 152, 219, 0.05); border-radius: 12px; border: 2px solid rgba(52, 152, 219, 0.2);">
-          <h3 style="margin: 0 0 12px 0; color: #3498db;">📜 Historique des Actions</h3>
-          <div id="admin-action-history" style="max-height: 200px; overflow-y: auto; font-size: 0.85em;"></div>
+        <div class="admin-section" style="margin-top: 25px; padding: 20px; background: rgba(52, 152, 219, 0.05); border-radius: 16px; border: 2px solid rgba(52, 152, 219, 0.2);">
+          <h3 style="margin: 0 0 15px 0; color: #3498db; font-size: 1.2em;">Historique des Actions</h3>
+          <div id="admin-action-history" style="max-height: 250px; overflow-y: auto; font-size: 0.9em;"></div>
         </div>
 
         <!-- Broadcast Message -->
-        <div style="margin-top: 20px; padding: 20px; background: rgba(52, 152, 219, 0.1); border-radius: 12px; border: 2px solid #3498db;">
-          <h3 style="margin-top: 0;">📢 Message Global</h3>
-          <div style="display: flex; gap: 10px;">
+        <div class="admin-section" style="margin-top: 25px; padding: 25px; background: rgba(52, 152, 219, 0.1); border-radius: 16px; border: 2px solid #3498db;">
+          <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 1.2em;">Message Global</h3>
+          <div style="display: flex; gap: 15px;">
             <input
               type="text"
               id="admin-broadcast-input"
-              placeholder="Message à tous les joueurs..."
-              style="flex: 1; padding: 10px; border-radius: 8px; border: 2px solid #3498db;"
+              placeholder="Message a tous les joueurs..."
+              style="flex: 1; padding: 14px; border-radius: 10px; border: 2px solid #3498db; font-size: 1em;"
             />
-            <button class="btn" onclick="sendBroadcast()" style="background: #3498db;">
-              📢 Envoyer
+            <button class="btn" onclick="sendBroadcast()" style="background: #3498db; padding: 14px 24px; font-size: 1em;">
+              Envoyer
             </button>
           </div>
         </div>
@@ -1120,9 +1120,53 @@ function createAdminMultiplayerModal() {
   document.body.appendChild(modal);
 }
 
+// Stockage des valeurs des inputs admin pour éviter le reset
+const adminInputValues = {
+  coinsAmount: 1000,
+  weather: 'sun',
+  season: 'spring',
+  pest: 'aphids',
+  seedPlant: 'grass',
+  seedAmount: 5,
+  seedAllAmount: 3,
+  harvestPlant: 'grass',
+  harvestAmount: 3,
+  building: 'sprinkler',
+  buildingAmount: 1,
+  prestige: 0
+};
+
+// Sauvegarder les valeurs actuelles des inputs
+function saveAdminInputValues() {
+  const inputs = {
+    'admin-coins-amount': 'coinsAmount',
+    'admin-weather': 'weather',
+    'admin-season': 'season',
+    'admin-pest': 'pest',
+    'admin-seed-plant': 'seedPlant',
+    'admin-seed-amount': 'seedAmount',
+    'admin-seed-all': 'seedAllAmount',
+    'admin-harvest-plant': 'harvestPlant',
+    'admin-harvest-amount': 'harvestAmount',
+    'admin-building': 'building',
+    'admin-building-amount': 'buildingAmount',
+    'admin-prestige': 'prestige'
+  };
+
+  Object.entries(inputs).forEach(([inputId, stateKey]) => {
+    const el = document.getElementById(inputId);
+    if (el) {
+      adminInputValues[stateKey] = el.value;
+    }
+  });
+}
+
 function renderAdminPlayersList() {
   const container = document.getElementById('admin-players-list');
   if (!container) return;
+
+  // Sauvegarder les valeurs actuelles avant de re-render
+  saveAdminInputValues();
 
   if (multiplayerState.players.length === 0) {
     container.innerHTML = `
@@ -1136,11 +1180,12 @@ function renderAdminPlayersList() {
   const targetId = getActiveTargetId();
   const target = multiplayerState.players.find((player) => player.id === targetId) || multiplayerState.players[0];
   const playerOptions = buildPlayerSelectOptions(target?.id);
-  const seasonOptions = buildSeasonOptions(target?.season);
-  const weatherOptions = buildWeatherOptions(target?.weather);
-  const plantOptions = buildPlantOptions();
-  const buildingOptions = buildBuildingOptions();
-  const pestOptions = buildPestOptions();
+  const seasonOptions = buildSeasonOptions(adminInputValues.season);
+  const weatherOptions = buildWeatherOptions(adminInputValues.weather);
+  const plantOptions = buildPlantOptions(adminInputValues.seedPlant);
+  const harvestPlantOptions = buildPlantOptions(adminInputValues.harvestPlant);
+  const buildingOptions = buildBuildingOptions(adminInputValues.building);
+  const pestOptions = buildPestOptions(adminInputValues.pest);
   const isSelf = target && target.id === multiplayerState.playerId;
 
   container.innerHTML = `
@@ -1148,115 +1193,180 @@ function renderAdminPlayersList() {
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.9));
       border: 2px solid rgba(46, 204, 113, 0.35);
       border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 15px;
+      padding: 25px;
+      margin-bottom: 20px;
     ">
-      <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <!-- Header: Player Selection -->
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(46, 204, 113, 0.2);">
         <div>
-          <h3 style="margin: 0 0 8px 0; color: #2ecc71;">Joueur cible</h3>
+          <h3 style="margin: 0 0 10px 0; color: #2ecc71; font-size: 1.3em;">Joueur Cible</h3>
           <select
             id="admin-target-select"
             onchange="setAdminTarget(this.value)"
-            style="min-width: 240px; padding: 8px; border-radius: 8px; border: 2px solid #2ecc71;"
+            style="min-width: 280px; padding: 12px; border-radius: 10px; border: 2px solid #2ecc71; font-size: 1em;"
           >
             ${playerOptions}
           </select>
         </div>
-        <div style="text-align: right; color: var(--text-light);">
-          <div>Connectes: ${multiplayerState.players.length}</div>
-          <div style="font-size: 0.85em;">ID: ${(target && target.id) ? target.id.slice(0, 6) + '...' : '--'}</div>
+        <div style="text-align: right; color: var(--text-light); background: rgba(46,204,113,0.1); padding: 12px 18px; border-radius: 12px;">
+          <div style="font-size: 1.1em; font-weight: 600;">Connectes: ${multiplayerState.players.length}</div>
+          <div style="font-size: 0.9em; margin-top: 4px;">ID: ${(target && target.id) ? target.id.slice(0, 8) + '...' : '--'}</div>
         </div>
       </div>
 
-      <div style="margin-top: 12px; display: grid; gap: 6px; font-size: 0.9em; color: var(--text-light);">
-        <div>?? ${target?.coins?.toLocaleString?.() || 0} coins ? ??? Niv. ${target?.level || 1} ? ?? Prestige ${target?.prestigeLevel || 0}</div>
-        <div>?? ${getSeasonLabel(target?.season)} ? ??? ${getWeatherLabel(target?.weather)}</div>
+      <!-- Player Info -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 25px; padding: 15px; background: rgba(0,0,0,0.03); border-radius: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.2em;">$</span>
+          <span style="font-weight: 600;">${target?.coins?.toLocaleString?.() || 0} coins</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.2em;">Niv.</span>
+          <span style="font-weight: 600;">${target?.level || 1}</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.2em;">P</span>
+          <span style="font-weight: 600;">Prestige ${target?.prestigeLevel || 0}</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-weight: 600;">${getSeasonLabel(target?.season)} - ${getWeatherLabel(target?.weather)}</span>
+        </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 16px;">
-        <div style="display: flex; gap: 6px;">
-          <input
-            type="number"
-            id="admin-coins-amount"
-            placeholder="Montant (+ ou -)"
-            value="1000"
-            style="flex: 1; padding: 8px; border-radius: 6px; border: 2px solid #2ecc71;"
-          />
-          <button class="btn" onclick="adminAdjustCoins('${target?.id}', getNumberInputValue('admin-coins-amount', 0))" style="background:#2ecc71;">+/-</button>
-          <button class="btn" onclick="adminSetCoins('${target?.id}', getNumberInputValue('admin-coins-amount', 0))" style="background:#27ae60;">=</button>
+      <!-- Actions Grid -->
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+
+        <!-- Coins Section -->
+        <div class="admin-action-group" style="background: rgba(46, 204, 113, 0.08); padding: 15px; border-radius: 12px; border: 1px solid rgba(46, 204, 113, 0.2);">
+          <h4 style="margin: 0 0 12px 0; color: #2ecc71; font-size: 1em;">Gestion Coins</h4>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input
+              type="number"
+              id="admin-coins-amount"
+              placeholder="Montant"
+              value="${adminInputValues.coinsAmount}"
+              style="flex: 1; padding: 10px; border-radius: 8px; border: 2px solid #2ecc71; font-size: 1em;"
+            />
+            <button class="btn" onclick="adminAdjustCoins('${target?.id}', getNumberInputValue('admin-coins-amount', 0))" style="background:#2ecc71; padding: 10px 16px;">+/-</button>
+            <button class="btn" onclick="adminSetCoins('${target?.id}', getNumberInputValue('admin-coins-amount', 0))" style="background:#27ae60; padding: 10px 16px;">=</button>
+          </div>
         </div>
 
-        <div style="display: flex; gap: 6px;">
-          <select id="admin-weather" style="flex:1; padding: 8px; border-radius: 6px; border: 2px solid #3498db;">
-            ${weatherOptions}
-          </select>
-          <button class="btn" onclick="adminChangeWeather('${target?.id}', getSelectValue('admin-weather', 'sun'))" style="background:#3498db;">???</button>
+        <!-- Weather Section -->
+        <div class="admin-action-group" style="background: rgba(52, 152, 219, 0.08); padding: 15px; border-radius: 12px; border: 1px solid rgba(52, 152, 219, 0.2);">
+          <h4 style="margin: 0 0 12px 0; color: #3498db; font-size: 1em;">Meteo</h4>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <select id="admin-weather" style="flex:1; padding: 10px; border-radius: 8px; border: 2px solid #3498db; font-size: 1em;">
+              ${weatherOptions}
+            </select>
+            <button class="btn" onclick="adminChangeWeather('${target?.id}', getSelectValue('admin-weather', 'sun'))" style="background:#3498db; padding: 10px 20px;">Appliquer</button>
+          </div>
         </div>
 
-        <div style="display: flex; gap: 6px;">
-          <select id="admin-season" style="flex:1; padding: 8px; border-radius: 6px; border: 2px solid #9b59b6;">
-            ${seasonOptions}
-          </select>
-          <button class="btn" onclick="adminChangeSeason('${target?.id}', getSelectValue('admin-season', 'spring'))" style="background:#9b59b6;">??</button>
+        <!-- Season Section -->
+        <div class="admin-action-group" style="background: rgba(155, 89, 182, 0.08); padding: 15px; border-radius: 12px; border: 1px solid rgba(155, 89, 182, 0.2);">
+          <h4 style="margin: 0 0 12px 0; color: #9b59b6; font-size: 1em;">Saison</h4>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <select id="admin-season" style="flex:1; padding: 10px; border-radius: 8px; border: 2px solid #9b59b6; font-size: 1em;">
+              ${seasonOptions}
+            </select>
+            <button class="btn" onclick="adminChangeSeason('${target?.id}', getSelectValue('admin-season', 'spring'))" style="background:#9b59b6; padding: 10px 20px;">Appliquer</button>
+          </div>
         </div>
 
-        <div style="display: flex; gap: 6px;">
-          <button class="btn" onclick="adminForceNight('${target?.id}')" style="background:#2c3e50; color:#fff;">?? Nuit</button>
-          <button class="btn" onclick="adminForceDay('${target?.id}')" style="background:#f39c12;">?? Jour</button>
+        <!-- Day/Night Section -->
+        <div class="admin-action-group" style="background: rgba(44, 62, 80, 0.08); padding: 15px; border-radius: 12px; border: 1px solid rgba(44, 62, 80, 0.2);">
+          <h4 style="margin: 0 0 12px 0; color: #2c3e50; font-size: 1em;">Jour / Nuit</h4>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn" onclick="adminForceNight('${target?.id}')" style="background:#2c3e50; color:#fff; flex: 1; padding: 10px;">Forcer Nuit</button>
+            <button class="btn" onclick="adminForceDay('${target?.id}')" style="background:#f39c12; flex: 1; padding: 10px;">Forcer Jour</button>
+          </div>
         </div>
 
-        <div style="display: flex; gap: 6px;">
-          <select id="admin-pest" style="flex:1; padding: 8px; border-radius: 6px; border: 2px solid #e74c3c;">
-            ${pestOptions}
-          </select>
-          <button class="btn" onclick="adminPestInfect('${target?.id}', getSelectValue('admin-pest'))" style="background:#e74c3c;">??</button>
-          <button class="btn" onclick="adminPestClear('${target?.id}')" style="background:#c0392b;">Clean</button>
+        <!-- Pest Section -->
+        <div class="admin-action-group" style="background: rgba(231, 76, 60, 0.08); padding: 15px; border-radius: 12px; border: 1px solid rgba(231, 76, 60, 0.2);">
+          <h4 style="margin: 0 0 12px 0; color: #e74c3c; font-size: 1em;">Maladies</h4>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <select id="admin-pest" style="flex:1; padding: 10px; border-radius: 8px; border: 2px solid #e74c3c; font-size: 1em;">
+              ${pestOptions}
+            </select>
+            <button class="btn" onclick="adminPestInfect('${target?.id}', getSelectValue('admin-pest'))" style="background:#e74c3c; padding: 10px 14px;">Infecter</button>
+            <button class="btn" onclick="adminPestClear('${target?.id}')" style="background:#c0392b; padding: 10px 14px;">Clean</button>
+          </div>
         </div>
 
-        <div style="display: flex; gap: 6px;">
-          <select id="admin-seed-plant" style="flex:1; padding: 8px; border-radius: 6px; border: 2px solid #16a085;">
-            ${plantOptions}
-          </select>
-          <input type="number" id="admin-seed-amount" value="5" style="width:80px; padding:8px; border-radius:6px; border:2px solid #16a085;" />
-          <button class="btn" onclick="adminSendSeeds('${target?.id}', getSelectValue('admin-seed-plant'), getNumberInputValue('admin-seed-amount', 1))" style="background:#16a085;">??</button>
+        <!-- Seeds Section -->
+        <div class="admin-action-group" style="background: rgba(22, 160, 133, 0.08); padding: 15px; border-radius: 12px; border: 1px solid rgba(22, 160, 133, 0.2);">
+          <h4 style="margin: 0 0 12px 0; color: #16a085; font-size: 1em;">Graines</h4>
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 10px;">
+            <select id="admin-seed-plant" style="flex:1; padding: 10px; border-radius: 8px; border: 2px solid #16a085; font-size: 1em;">
+              ${plantOptions}
+            </select>
+            <input type="number" id="admin-seed-amount" value="${adminInputValues.seedAmount}" style="width:70px; padding:10px; border-radius:8px; border:2px solid #16a085; font-size: 1em;" />
+            <button class="btn" onclick="adminSendSeeds('${target?.id}', getSelectValue('admin-seed-plant'), getNumberInputValue('admin-seed-amount', 1))" style="background:#16a085; padding: 10px 14px;">+</button>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="number" id="admin-seed-all" value="${adminInputValues.seedAllAmount}" placeholder="Toutes" style="flex:1; padding:10px; border-radius:8px; border:2px solid #1abc9c; font-size: 1em;" />
+            <button class="btn" onclick="adminSendSeedsAll('${target?.id}', getNumberInputValue('admin-seed-all', 1))" style="background:#1abc9c; padding: 10px 14px;">+ Toutes</button>
+            <button class="btn danger" onclick="adminClearSeeds('${target?.id}')" style="padding: 10px 14px;">Clear</button>
+          </div>
         </div>
 
-        <div style="display: flex; gap: 6px;">
-          <input type="number" id="admin-seed-all" value="3" style="flex:1; padding:8px; border-radius:6px; border:2px solid #1abc9c;" />
-          <button class="btn" onclick="adminSendSeedsAll('${target?.id}', getNumberInputValue('admin-seed-all', 1))" style="background:#1abc9c;">?? All</button>
-          <button class="btn danger" onclick="adminClearSeeds('${target?.id}')">Clear</button>
+        <!-- Harvest Section -->
+        <div class="admin-action-group" style="background: rgba(243, 156, 18, 0.08); padding: 15px; border-radius: 12px; border: 1px solid rgba(243, 156, 18, 0.2);">
+          <h4 style="margin: 0 0 12px 0; color: #f39c12; font-size: 1em;">Recoltes</h4>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <select id="admin-harvest-plant" style="flex:1; padding: 10px; border-radius: 8px; border: 2px solid #f39c12; font-size: 1em;">
+              ${harvestPlantOptions}
+            </select>
+            <input type="number" id="admin-harvest-amount" value="${adminInputValues.harvestAmount}" style="width:70px; padding:10px; border-radius:8px; border:2px solid #f39c12; font-size: 1em;" />
+            <button class="btn" onclick="adminAddHarvest('${target?.id}', getSelectValue('admin-harvest-plant'), getNumberInputValue('admin-harvest-amount', 1))" style="background:#f39c12; padding: 10px 14px;">+</button>
+          </div>
         </div>
 
-        <div style="display: flex; gap: 6px;">
-          <select id="admin-harvest-plant" style="flex:1; padding: 8px; border-radius: 6px; border: 2px solid #f39c12;">
-            ${plantOptions}
-          </select>
-          <input type="number" id="admin-harvest-amount" value="3" style="width:80px; padding:8px; border-radius:6px; border:2px solid #f39c12;" />
-          <button class="btn" onclick="adminAddHarvest('${target?.id}', getSelectValue('admin-harvest-plant'), getNumberInputValue('admin-harvest-amount', 1))" style="background:#f39c12;">??</button>
+        <!-- Building Section -->
+        <div class="admin-action-group" style="background: rgba(142, 68, 173, 0.08); padding: 15px; border-radius: 12px; border: 1px solid rgba(142, 68, 173, 0.2);">
+          <h4 style="margin: 0 0 12px 0; color: #8e44ad; font-size: 1em;">Batiments</h4>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <select id="admin-building" style="flex:1; padding: 10px; border-radius: 8px; border: 2px solid #8e44ad; font-size: 1em;">
+              ${buildingOptions}
+            </select>
+            <input type="number" id="admin-building-amount" value="${adminInputValues.buildingAmount}" style="width:70px; padding:10px; border-radius:8px; border:2px solid #8e44ad; font-size: 1em;" />
+            <button class="btn" onclick="adminAddBuilding('${target?.id}', getSelectValue('admin-building'), getNumberInputValue('admin-building-amount', 1))" style="background:#8e44ad; padding: 10px 14px;">+</button>
+          </div>
         </div>
 
-        <div style="display: flex; gap: 6px;">
-          <select id="admin-building" style="flex:1; padding: 8px; border-radius: 6px; border: 2px solid #8e44ad;">
-            ${buildingOptions}
-          </select>
-          <input type="number" id="admin-building-amount" value="1" style="width:80px; padding:8px; border-radius:6px; border:2px solid #8e44ad;" />
-          <button class="btn" onclick="adminAddBuilding('${target?.id}', getSelectValue('admin-building'), getNumberInputValue('admin-building-amount', 1))" style="background:#8e44ad;">???</button>
+        <!-- Prestige Section -->
+        <div class="admin-action-group" style="background: rgba(192, 57, 43, 0.08); padding: 15px; border-radius: 12px; border: 1px solid rgba(192, 57, 43, 0.2);">
+          <h4 style="margin: 0 0 12px 0; color: #c0392b; font-size: 1em;">Prestige</h4>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="number" id="admin-prestige" value="${adminInputValues.prestige}" placeholder="Niveau" style="flex:1; padding:10px; border-radius:8px; border:2px solid #c0392b; font-size: 1em;" />
+            <button class="btn" onclick="adminSetPrestigeLevel('${target?.id}', getNumberInputValue('admin-prestige', 0))" style="background:#c0392b; padding: 10px 20px;">Definir</button>
+          </div>
         </div>
 
-        <div style="display: flex; gap: 6px;">
-          <input type="number" id="admin-prestige" value="0" style="flex:1; padding:8px; border-radius:6px; border:2px solid #c0392b;" />
-          <button class="btn" onclick="adminSetPrestigeLevel('${target?.id}', getNumberInputValue('admin-prestige', 0))" style="background:#c0392b;">?? Prestige</button>
+      </div>
+
+      <!-- Special Actions -->
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(0,0,0,0.1);">
+        <h4 style="margin: 0 0 15px 0; color: #7f8c8d; font-size: 1em;">Actions Speciales</h4>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+          <button class="btn" onclick="adminAddSpecials('${target?.id}')" style="background:#9b59b6; padding: 12px;">+ Specials</button>
+          <button class="btn" onclick="adminForceLegendaryEvent('${target?.id}')" style="background:#f1c40f; color: #333; padding: 12px;">Legendary</button>
+          <button class="btn" onclick="adminResetStreak('${target?.id}')" style="background:#d35400; padding: 12px;">Reset Streak</button>
+          <button class="btn" onclick="adminForceHarvest('${target?.id}')" style="background:#2ecc71; padding: 12px;">Force Harvest</button>
         </div>
+      </div>
 
-        <button class="btn" onclick="adminAddSpecials('${target?.id}')" style="background:#9b59b6;">? Specials</button>
-        <button class="btn" onclick="adminForceLegendaryEvent('${target?.id}')" style="background:#f1c40f;">?? Legendary</button>
-        <button class="btn" onclick="adminResetStreak('${target?.id}')" style="background:#d35400;">?? Reset Streak</button>
-        <button class="btn" onclick="adminForceHarvest('${target?.id}')" style="background:#2ecc71;">?? Harvest</button>
-
-        <button class="btn danger" onclick="adminKickPlayer('${target?.id}')" ${isSelf ? 'disabled' : ''}>?? Kick</button>
-        <button class="btn danger" onclick="adminBanPlayer('${target?.id}')" ${isSelf ? 'disabled' : ''}>? Ban</button>
-        <button class="btn" onclick="adminUnbanAll()" style="background:#16a085;">? Unban</button>
-        <button class="btn danger" onclick="if (confirm('Reset complet du joueur?')) adminResetSave('${target?.id}')">?? Reset Save</button>
+      <!-- Danger Zone -->
+      <div style="margin-top: 20px; padding: 20px; background: rgba(231, 76, 60, 0.08); border-radius: 12px; border: 2px solid rgba(231, 76, 60, 0.3);">
+        <h4 style="margin: 0 0 15px 0; color: #e74c3c; font-size: 1em;">Zone Danger</h4>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+          <button class="btn danger" onclick="adminKickPlayer('${target?.id}')" ${isSelf ? 'disabled' : ''} style="padding: 12px;">Kick</button>
+          <button class="btn danger" onclick="adminBanPlayer('${target?.id}')" ${isSelf ? 'disabled' : ''} style="padding: 12px;">Ban</button>
+          <button class="btn" onclick="adminUnbanAll()" style="background:#16a085; padding: 12px;">Unban All</button>
+          <button class="btn danger" onclick="if (confirm('Reset complet du joueur?')) adminResetSave('${target?.id}')" style="padding: 12px;">Reset Save</button>
+        </div>
       </div>
     </div>
   `;

@@ -52,44 +52,44 @@ const PEST_TYPES = {
   }
 };
 
-// Traitements contre les nuisibles (RÉDUIT)
+// Traitements contre les nuisibles - PRIX RÉDUITS car plus de maladies
 const TREATMENTS = {
   INSECTICIDE: {
     id: 'insecticide',
-    name: '💊 Insecticide',
-    emoji: '💊',
-    description: 'Élimine les insectes (Pucerons, Sauterelles)',
-    cost: 400,
+    name: 'Insecticide',
+    emoji: '',
+    description: 'Elimine les insectes (Pucerons, Sauterelles)',
+    cost: 50, // Réduit de 400 à 50
     effectiveAgainst: ['aphids', 'locusts'],
-    successRate: 0.90,
+    successRate: 0.85,
     areaEffect: false
   },
   FUNGICIDE: {
     id: 'fungicide',
-    name: '🧪 Fongicide',
-    emoji: '🧪',
-    description: 'Élimine les champignons',
-    cost: 600,
+    name: 'Fongicide',
+    emoji: '',
+    description: 'Elimine les champignons',
+    cost: 75, // Réduit de 600 à 75
     effectiveAgainst: ['fungus'],
-    successRate: 0.85,
+    successRate: 0.80,
     areaEffect: false
   },
   MIRACLE_CURE: {
     id: 'miracle_cure',
-    name: '✨ Remède Universel',
-    emoji: '✨',
-    description: 'Guérit toutes les maladies d\'une plante',
-    cost: 1200,
+    name: 'Remede Universel',
+    emoji: '',
+    description: 'Guerit toutes les maladies d\'une plante',
+    cost: 150, // Réduit de 1200 à 150
     effectiveAgainst: Object.keys(PEST_TYPES),
-    successRate: 0.95,
+    successRate: 0.90,
     areaEffect: false
   },
   PREVENTION_SPRAY: {
     id: 'prevention_spray',
-    name: '🛡️ Protection',
-    emoji: '🛡️',
-    description: 'Protège tout le jardin pendant 3 minutes',
-    cost: 3000,
+    name: 'Protection',
+    emoji: '',
+    description: 'Protege tout le jardin pendant 3 minutes',
+    cost: 400, // Réduit de 3000 à 400
     effectiveAgainst: Object.keys(PEST_TYPES),
     successRate: 1.0,
     areaEffect: true,
@@ -123,11 +123,11 @@ function tickPests() {
     return; // Pas d'infection pendant la protection
   } else if (state.pests.protection && state.pests.protection.until <= now) {
     state.pests.protection = null;
-    showToast('🛡️ Protection expirée', 'warning');
+    showToast('Protection expiree', 'warning');
   }
 
-  // Chance d'apparition aléatoire légèrement augmentée (0.5% par tick, environ toutes les 20 secondes)
-  if (Math.random() < 0.005) {
+  // Chance d'apparition AUGMENTÉE (3% par tick) - beaucoup plus de maladies!
+  if (Math.random() < 0.03) {
     tryInfectRandomPlant();
   }
 

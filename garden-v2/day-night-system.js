@@ -384,46 +384,66 @@ function tickDayNight() {
 // Appliquer le thème visuel
 function applyDayNightTheme() {
   const body = document.body;
+  if (!body) return;
+
   body.setAttribute('data-time', dayNightState.current);
 
-  // Vérifier les paramètres
-  const forceDarkMode = typeof settings !== 'undefined' ? settings.forceDarkModeAtNight !== false : true;
-
-  // Changer le background selon l'heure
-  const app = document.getElementById('app');
-  if (!app) return;
-
   const isNight = dayNightState.current === 'night';
+  const isDusk = dayNightState.current === 'dusk';
+  const isDawn = dayNightState.current === 'dawn';
 
-  // Forcer le mode sombre la nuit si activé
-  if (forceDarkMode && isNight) {
+  // Appliquer le mode sombre la nuit
+  if (isNight) {
     body.setAttribute('data-theme', 'dark');
-  } else if (forceDarkMode && !isNight) {
-    // Restaurer le thème original (ou light par défaut)
+    body.classList.add('night-mode');
+    body.classList.remove('day-mode');
+  } else {
+    // Restaurer le thème clair le jour
     const savedTheme = localStorage.getItem('theme') || 'light';
     body.setAttribute('data-theme', savedTheme);
+    body.classList.remove('night-mode');
+    body.classList.add('day-mode');
   }
 
+  // Appliquer les filtres visuels
   switch (dayNightState.current) {
     case 'day':
-      body.style.filter = 'brightness(1)';
+      body.style.filter = 'none';
+      body.style.transition = 'filter 2s ease';
       break;
     case 'dusk':
-      body.style.filter = 'brightness(0.8) sepia(0.3)';
+      body.style.filter = 'brightness(0.85) sepia(0.25)';
+      body.style.transition = 'filter 2s ease';
       break;
     case 'night':
-      body.style.filter = 'brightness(0.6) saturate(0.8)';
+      body.style.filter = 'brightness(0.7) saturate(0.85)';
+      body.style.transition = 'filter 2s ease';
       break;
     case 'dawn':
-      body.style.filter = 'brightness(0.9) sepia(0.2)';
+      body.style.filter = 'brightness(0.9) sepia(0.15)';
+      body.style.transition = 'filter 2s ease';
       break;
+  }
+
+  // Mettre à jour l'indicateur de temps si présent
+  const timeIndicator = document.getElementById('day-night-indicator');
+  if (timeIndicator) {
+    timeIndicator.textContent = `${getDayNightIcon()} ${getDayNightText()} - ${getTimeUntilTransition()}`;
   }
 }
 
-// Mettre à jour l'affichage du cycle
+// Mettre à jour l'affichage du cycle régulièrement
 setInterval(() => {
   applyDayNightTheme();
 }, 1000);
+
+// Exposer les fonctions globalement
+window.dayNightState = dayNightState;
+window.getDayNightIcon = getDayNightIcon;
+window.getDayNightText = getDayNightText;
+window.getTimeUntilTransition = getTimeUntilTransition;
+window.applyDayNightTheme = applyDayNightTheme;
+window.tickDayNight = tickDayNight;
 
 console.log('✅ Day/Night Cycle System loaded');
 
