@@ -21,6 +21,19 @@
   --red: #e74c3c;
   --dark-bg: #1a1a2e;
   --card-bg: #ffffff;
+  --page-bg: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  --surface-bg: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+  --surface-muted-bg: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,249,250,0.9));
+  --surface-border: rgba(255,255,255,0.3);
+  --plot-bg: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  --plot-border: #dee2e6;
+  --tabs-bg: rgba(0,0,0,0.05);
+  --tab-active-bg: white;
+  --tab-active-text: var(--primary-green);
+  --icon-btn-bg: white;
+  --icon-btn-border: rgba(46, 204, 113, 0.3);
+  --modal-header-bg: linear-gradient(135deg, #1f7a53, #1b5f46);
+  --toast-accent: #6be3a1;
   --text-dark: #2c3e50;
   --text-light: #7f8c8d;
   --shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -29,7 +42,7 @@
 
 body {
   font-family: 'Poppins', 'Segoe UI', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: var(--page-bg, linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%));
   background-attachment: fixed;
   min-height: 100vh;
   color: var(--text-dark);
@@ -51,12 +64,25 @@ body::before {
 }
 
 body[data-theme="dark"] {
+  --page-bg: linear-gradient(135deg, #1b1f36 0%, #222841 50%, #2a2f4a 100%);
+  --surface-bg: linear-gradient(135deg, rgba(20, 26, 38, 0.95) 0%, rgba(16, 21, 33, 0.92) 100%);
+  --surface-muted-bg: linear-gradient(135deg, rgba(25, 32, 48, 0.95), rgba(19, 25, 38, 0.95));
+  --surface-border: rgba(255,255,255,0.08);
+  --plot-bg: linear-gradient(135deg, #1c2334, #242c40);
+  --plot-border: #2a3246;
+  --tabs-bg: rgba(255,255,255,0.06);
+  --tab-active-bg: #1b2336;
+  --tab-active-text: #9be5bb;
+  --icon-btn-bg: #1b2336;
+  --icon-btn-border: rgba(46, 204, 113, 0.2);
+  --modal-header-bg: linear-gradient(135deg, #1f7a53, #1b5f46);
+  --toast-accent: #6be3a1;
   --text-dark: #e6edf5;
   --text-light: #b9c2d0;
   --shadow: 0 4px 12px rgba(0,0,0,0.45);
   --shadow-hover: 0 6px 16px rgba(0,0,0,0.6);
-  color: #e6edf5;
-  background: linear-gradient(135deg, #1b1f36 0%, #222841 50%, #2a2f4a 100%);
+  color: var(--text-dark);
+  background: var(--page-bg, linear-gradient(135deg, #1b1f36 0%, #222841 50%, #2a2f4a 100%));
 }
 
 body[data-theme="dark"]::before {
@@ -66,54 +92,54 @@ body[data-theme="dark"]::before {
 body[data-theme="dark"] header,
 body[data-theme="dark"] section,
 body[data-theme="dark"] footer {
-  background: linear-gradient(135deg, rgba(20, 26, 38, 0.95) 0%, rgba(16, 21, 33, 0.92) 100%);
-  border-color: rgba(255,255,255,0.08);
+  background: var(--surface-bg, linear-gradient(135deg, rgba(20, 26, 38, 0.95) 0%, rgba(16, 21, 33, 0.92) 100%));
+  border-color: var(--surface-border, rgba(255,255,255,0.08));
 }
 
 body[data-theme="dark"] .icon-btn {
-  background: #1b2336;
-  border-color: rgba(46, 204, 113, 0.2);
-  color: #e6edf5;
+  background: var(--icon-btn-bg, #1b2336);
+  border-color: var(--icon-btn-border, rgba(46, 204, 113, 0.2));
+  color: var(--text-dark);
 }
 
 body[data-theme="dark"] .season-indicator,
 body[data-theme="dark"] .season-event,
 body[data-theme="dark"] .weather-panel {
-  background: rgba(18, 24, 36, 0.92);
-  border-color: rgba(255,255,255,0.1);
-  color: #e6edf5;
+  background: var(--surface-bg, rgba(18, 24, 36, 0.92));
+  border-color: var(--surface-border, rgba(255,255,255,0.1));
+  color: var(--text-dark);
 }
 
 body[data-theme="dark"] .tabs {
-  background: rgba(255,255,255,0.06);
+  background: var(--tabs-bg, rgba(255,255,255,0.06));
 }
 
 body[data-theme="dark"] .tab {
-  color: #b9c2d0;
+  color: var(--text-light);
 }
 
 body[data-theme="dark"] .tab.active {
-  background: #1b2336;
-  color: #9be5bb;
+  background: var(--tab-active-bg, #1b2336);
+  color: var(--tab-active-text, #9be5bb);
 }
 
 body[data-theme="dark"] .shop-item {
-  background: linear-gradient(135deg, rgba(25, 32, 48, 0.95), rgba(19, 25, 38, 0.95));
-  border-color: rgba(255,255,255,0.08);
+  background: var(--surface-muted-bg, linear-gradient(135deg, rgba(25, 32, 48, 0.95), rgba(19, 25, 38, 0.95)));
+  border-color: var(--surface-border, rgba(255,255,255,0.08));
 }
 
 body[data-theme="dark"] .plot {
-  background: linear-gradient(135deg, #1c2334, #242c40);
-  border-color: #2a3246;
+  background: var(--plot-bg, linear-gradient(135deg, #1c2334, #242c40));
+  border-color: var(--plot-border, #2a3246);
 }
 
 body[data-theme="dark"] .modal-content {
-  background: #151b2c;
-  color: #e6edf5;
+  background: var(--surface-bg, #151b2c);
+  color: var(--text-dark);
 }
 
 body[data-theme="dark"] .modal-header {
-  background: linear-gradient(135deg, #1f7a53, #1b5f46);
+  background: var(--modal-header-bg, linear-gradient(135deg, #1f7a53, #1b5f46));
 }
 
 body[data-theme="dark"] .modal-footer {
@@ -121,8 +147,8 @@ body[data-theme="dark"] .modal-footer {
 }
 
 body[data-theme="dark"] .toast {
-  background: linear-gradient(135deg, rgba(20, 26, 38, 0.98), rgba(16, 21, 33, 0.95));
-  border-left-color: #6be3a1;
+  background: var(--surface-muted-bg, linear-gradient(135deg, rgba(20, 26, 38, 0.98), rgba(16, 21, 33, 0.95)));
+  border-left-color: var(--toast-accent, #6be3a1);
 }
 
 #app {
@@ -139,7 +165,7 @@ body[data-theme="dark"] .toast {
    ============================================ */
 
 header {
-  background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+  background: var(--surface-bg, linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%));
   backdrop-filter: blur(10px);
   padding: 25px 35px;
   border-radius: 20px;
@@ -148,7 +174,7 @@ header {
   justify-content: space-between;
   align-items: center;
   box-shadow: var(--shadow);
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid var(--surface-border, rgba(255,255,255,0.3));
   position: relative;
   overflow: hidden;
 }
@@ -218,8 +244,8 @@ h1 {
   width: 45px;
   height: 45px;
   border-radius: 12px;
-  border: 2px solid rgba(46, 204, 113, 0.3);
-  background: white;
+  border: 2px solid var(--icon-btn-border, rgba(46, 204, 113, 0.3));
+  background: var(--icon-btn-bg, white);
   font-size: 1.3em;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -325,10 +351,10 @@ h1 {
   align-items: center;
   gap: 12px;
   padding: 12px 22px;
-  background: rgba(255,255,255,0.92);
+  background: var(--surface-bg, rgba(255,255,255,0.92));
   border-radius: 16px;
   font-size: 1em;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid var(--surface-border, rgba(0,0,0,0.08));
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   position: relative;
   overflow: hidden;
@@ -364,12 +390,12 @@ main {
 }
 
 section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--surface-bg, rgba(255, 255, 255, 0.95));
   backdrop-filter: blur(10px);
   padding: 25px;
   border-radius: 20px;
   box-shadow: var(--shadow);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid var(--surface-border, rgba(255, 255, 255, 0.3));
   transition: all 0.3s ease;
 }
 
@@ -496,8 +522,8 @@ h2::before {
   height: 85px;
   min-width: 85px;
   min-height: 85px;
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  border: 2px solid #dee2e6;
+  background: var(--plot-bg, linear-gradient(135deg, #f8f9fa, #e9ecef));
+  border: 2px solid var(--plot-border, #dee2e6);
   border-radius: 10px;
   cursor: pointer;
   display: flex;
@@ -749,7 +775,7 @@ h2::before {
   display: flex;
   gap: 8px;
   margin-bottom: 20px;
-  background: rgba(0,0,0,0.05);
+  background: var(--tabs-bg, rgba(0,0,0,0.05));
   padding: 5px;
   border-radius: 12px;
 }
@@ -773,8 +799,8 @@ h2::before {
 }
 
 .tab.active {
-  background: white;
-  color: var(--primary-green);
+  background: var(--tab-active-bg, white);
+  color: var(--tab-active-text, var(--primary-green));
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
@@ -810,8 +836,8 @@ h2::before {
 
 /* Shop Items */
 .shop-item {
-  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,249,250,0.9));
-  border: 2px solid rgba(0,0,0,0.1);
+  background: var(--surface-muted-bg, linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,249,250,0.9)));
+  border: 2px solid var(--surface-border, rgba(0,0,0,0.1));
   border-radius: 15px;
   padding: 15px;
   margin-bottom: 12px;
@@ -1051,7 +1077,7 @@ footer .muted {
 }
 
 .toast {
-  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+  background: var(--surface-muted-bg, linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9)));
   backdrop-filter: blur(10px);
   padding: 15px 20px;
   border-radius: 12px;
@@ -1116,7 +1142,7 @@ footer .muted {
 }
 
 .modal-content {
-  background: white;
+  background: var(--surface-bg, white);
   border-radius: 20px;
   max-width: 600px;
   width: 90%;
@@ -1138,7 +1164,7 @@ footer .muted {
 }
 
 .modal-header {
-  background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+  background: var(--modal-header-bg, linear-gradient(135deg, var(--primary-green), var(--dark-green)));
   color: white;
   padding: 20px 25px;
   display: flex;
@@ -2089,19 +2115,19 @@ body[data-theme="dark"] .theme-toggle {
 
 /* Seasonal backgrounds */
 body[data-season="spring"] {
-  background: linear-gradient(135deg, #8ee6b5 0%, #9ad0f5 55%, #f6d1f5 100%);
+  --page-bg: linear-gradient(135deg, #8ee6b5 0%, #9ad0f5 55%, #f6d1f5 100%);
 }
 
 body[data-season="summer"] {
-  background: linear-gradient(135deg, #ffd36e 0%, #ff9f6e 55%, #ff7eb3 100%);
+  --page-bg: linear-gradient(135deg, #ffd36e 0%, #ff9f6e 55%, #ff7eb3 100%);
 }
 
 body[data-season="autumn"] {
-  background: linear-gradient(135deg, #ffb86b 0%, #ff8f5f 55%, #c86b3c 100%);
+  --page-bg: linear-gradient(135deg, #ffb86b 0%, #ff8f5f 55%, #c86b3c 100%);
 }
 
 body[data-season="winter"] {
-  background: linear-gradient(135deg, #b6d8ff 0%, #8bb7ff 55%, #d7e8ff 100%);
+  --page-bg: linear-gradient(135deg, #b6d8ff 0%, #8bb7ff 55%, #d7e8ff 100%);
 }
 
 body[data-season]::before {
@@ -2211,13 +2237,13 @@ body[data-season] .season-decor.right::before {
   font-size: 0.9em;
   font-weight: 600;
   text-align: center;
-  background: rgba(255,255,255,0.9);
-  border: 1px solid rgba(0,0,0,0.08);
+  background: var(--surface-bg, rgba(255,255,255,0.9));
+  border: 1px solid var(--surface-border, rgba(0,0,0,0.08));
   box-shadow: 0 6px 14px rgba(0,0,0,0.08);
 }
 
 .season-event.active {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--surface-bg, rgba(255, 255, 255, 0.95));
   border-color: rgba(243, 156, 18, 0.4);
 }
 
@@ -2409,8 +2435,8 @@ body[data-season="winter"]::after {
   font-size: 0.95em;
   font-weight: 700;
   text-align: center;
-  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.8));
-  border: 1px solid rgba(0,0,0,0.1);
+  background: var(--surface-bg, linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.8)));
+  border: 1px solid var(--surface-border, rgba(0,0,0,0.1));
   box-shadow: 0 8px 18px rgba(0,0,0,0.1);
 }
 
@@ -2490,8 +2516,8 @@ body[data-season="winter"]::after {
   width: 92%;
   border-radius: 16px;
   padding: 22px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,255,255,0.9));
-  border: 2px solid rgba(0,0,0,0.08);
+  background: var(--surface-bg, linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,255,255,0.9)));
+  border: 2px solid var(--surface-border, rgba(0,0,0,0.08));
   box-shadow: 0 14px 30px rgba(0,0,0,0.18);
   text-align: center;
 }
@@ -2805,4 +2831,3 @@ body[data-theme="dark"] .settings-select option {
   background: #1b2336;
   color: #e6edf5;
 }
-

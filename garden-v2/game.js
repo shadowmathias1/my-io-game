@@ -7826,7 +7826,9 @@ function applyTheme(theme) {
 
   document.body.dataset.theme = resolved;
 
-
+  if (typeof applyThemeColorsForMode === 'function') {
+    applyThemeColorsForMode(resolved);
+  }
 
   const toggle = document.getElementById('theme-toggle');
 

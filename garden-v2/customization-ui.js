@@ -35,10 +35,11 @@ function renderThemes() {
     const unlocked = state.customization.unlockedThemes.includes(theme.id);
     const active = state.customization.theme === theme.id;
     const canAfford = state.coins >= theme.cost;
+    const palette = theme.colors && theme.colors.light ? theme.colors.light : theme.colors;
 
     return `
       <div class="custom-item ${active ? 'active' : ''} ${!unlocked ? 'locked' : ''}">
-        <div class="custom-item-preview" style="background: linear-gradient(135deg, ${theme.colors.primary}, ${theme.colors.secondary})">
+        <div class="custom-item-preview" style="background: linear-gradient(135deg, ${palette.primary}, ${palette.secondary})">
           ${theme.name.split(' ')[0]}
         </div>
         <div class="custom-item-info">
@@ -258,7 +259,7 @@ document.addEventListener('click', (e) => {
 
     switch (type) {
       case 'theme':
-        applyTheme(id);
+        applyVisualTheme(id);
         break;
       case 'border':
         applyBorder(id);

@@ -405,6 +405,11 @@ function applyDayNightTheme() {
     body.classList.add('day-mode');
   }
 
+  if (typeof applyThemeColorsForMode === 'function') {
+    const mode = body.dataset.theme === 'dark' ? 'dark' : 'light';
+    applyThemeColorsForMode(mode);
+  }
+
   // Appliquer les filtres visuels
   switch (dayNightState.current) {
     case 'day':

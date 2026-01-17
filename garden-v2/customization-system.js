@@ -7,98 +7,178 @@
 const VISUAL_THEMES = {
   default: {
     id: 'default',
-    name: '🌿 Classique',
+    name: '?? Classique',
     cost: 0,
     unlocked: true,
     colors: {
-      primary: '#2ecc71',
-      secondary: '#27ae60',
-      background: '#f8f9fa',
-      text: '#2c3e50'
+      light: {
+        primary: '#2ecc71',
+        secondary: '#27ae60',
+        background: '#f8f9fa',
+        surface: '#ffffff',
+        surfaceMuted: '#f2f6f8'
+      },
+      dark: {
+        primary: '#49d88d',
+        secondary: '#1f7a53',
+        background: '#121826',
+        surface: '#151b2c',
+        surfaceMuted: '#1b2336'
+      }
     }
   },
   sunset: {
     id: 'sunset',
-    name: '🌅 Coucher de Soleil',
+    name: '?? Coucher de Soleil',
     cost: 5000,
     unlocked: false,
     colors: {
-      primary: '#ff6b6b',
-      secondary: '#ee5a6f',
-      background: '#ffe5e5',
-      text: '#2c3e50'
+      light: {
+        primary: '#ff6b6b',
+        secondary: '#ee5a6f',
+        background: '#ffe5e5',
+        surface: '#fff5f2',
+        surfaceMuted: '#ffe1dc'
+      },
+      dark: {
+        primary: '#ff8b8b',
+        secondary: '#d65066',
+        background: '#2b1720',
+        surface: '#2f1b24',
+        surfaceMuted: '#3a2230'
+      }
     }
   },
   ocean: {
     id: 'ocean',
-    name: '🌊 Océan',
-    cost: 8000,
+    name: '?? Oc?an',
+    cost: 5000,
     unlocked: false,
     colors: {
-      primary: '#3498db',
-      secondary: '#2980b9',
-      background: '#e3f2fd',
-      text: '#2c3e50'
+      light: {
+        primary: '#3498db',
+        secondary: '#2a7bb8',
+        background: '#e7f4ff',
+        surface: '#f2f9ff',
+        surfaceMuted: '#d9ecfb'
+      },
+      dark: {
+        primary: '#4aa8ff',
+        secondary: '#1f6bb5',
+        background: '#0b1b2b',
+        surface: '#0f2234',
+        surfaceMuted: '#132a3f'
+      }
     }
   },
   forest: {
     id: 'forest',
-    name: '🌲 Forêt',
+    name: '?? For?t',
     cost: 10000,
     unlocked: false,
     colors: {
-      primary: '#16a085',
-      secondary: '#138d75',
-      background: '#d5f4e6',
-      text: '#1e4620'
+      light: {
+        primary: '#16a085',
+        secondary: '#138d75',
+        background: '#d5f4e6',
+        surface: '#eefaf4',
+        surfaceMuted: '#c9ead8'
+      },
+      dark: {
+        primary: '#2dd6b5',
+        secondary: '#1aa689',
+        background: '#10231e',
+        surface: '#142b24',
+        surfaceMuted: '#1b372e'
+      }
     }
   },
   lavender: {
     id: 'lavender',
-    name: '💜 Lavande',
+    name: '?? Lavande',
     cost: 12000,
     unlocked: false,
     colors: {
-      primary: '#9b59b6',
-      secondary: '#8e44ad',
-      background: '#f4ecf7',
-      text: '#2c3e50'
+      light: {
+        primary: '#9b59b6',
+        secondary: '#8e44ad',
+        background: '#f4ecf7',
+        surface: '#faf4ff',
+        surfaceMuted: '#eadcf3'
+      },
+      dark: {
+        primary: '#b981dd',
+        secondary: '#8f50b6',
+        background: '#24182b',
+        surface: '#2b1f33',
+        surfaceMuted: '#382544'
+      }
     }
   },
   golden: {
     id: 'golden',
-    name: '✨ Doré',
+    name: '? Dor?',
     cost: 20000,
     unlocked: false,
     colors: {
-      primary: '#f39c12',
-      secondary: '#e67e22',
-      background: '#fff5e6',
-      text: '#7d4e00'
+      light: {
+        primary: '#f39c12',
+        secondary: '#e67e22',
+        background: '#fff5e6',
+        surface: '#fff9f0',
+        surfaceMuted: '#ffe4bf'
+      },
+      dark: {
+        primary: '#f7b545',
+        secondary: '#d9781f',
+        background: '#2b1e0f',
+        surface: '#312312',
+        surfaceMuted: '#3b2b16'
+      }
     }
   },
   sakura: {
     id: 'sakura',
-    name: '🌸 Sakura',
+    name: '?? Sakura',
     cost: 15000,
     unlocked: false,
     colors: {
-      primary: '#ff69b4',
-      secondary: '#ff1493',
-      background: '#fff0f5',
-      text: '#8b008b'
+      light: {
+        primary: '#ff69b4',
+        secondary: '#ff1493',
+        background: '#fff0f5',
+        surface: '#fff6fa',
+        surfaceMuted: '#ffd7e7'
+      },
+      dark: {
+        primary: '#ff8fc9',
+        secondary: '#e01686',
+        background: '#2b1521',
+        surface: '#321a27',
+        surfaceMuted: '#3c2030'
+      }
     }
   },
   midnight: {
     id: 'midnight',
-    name: '🌙 Minuit',
+    name: '?? Minuit',
     cost: 25000,
     unlocked: false,
     colors: {
-      primary: '#34495e',
-      secondary: '#2c3e50',
-      background: '#ecf0f1',
-      text: '#2c3e50'
+      light: {
+        primary: '#34495e',
+        secondary: '#2c3e50',
+        background: '#ecf0f1',
+        surface: '#f4f6f7',
+        surfaceMuted: '#e1e6ea'
+      },
+      dark: {
+        primary: '#5f778f',
+        secondary: '#2c3e50',
+        background: '#0f141a',
+        surface: '#141b23',
+        surfaceMuted: '#1b2430'
+      }
     }
   }
 };
@@ -208,6 +288,93 @@ const DECORATIONS = {
     orientation: 'vertical'
   }
 };
+
+function hexToRgb(hex) {
+  const clean = hex.replace('#', '');
+  if (clean.length !== 6) return { r: 0, g: 0, b: 0 };
+  const num = parseInt(clean, 16);
+  return {
+    r: (num >> 16) & 255,
+    g: (num >> 8) & 255,
+    b: num & 255
+  };
+}
+
+function mixHex(hexA, hexB, weightB) {
+  const a = hexToRgb(hexA);
+  const b = hexToRgb(hexB);
+  const w = Math.min(Math.max(weightB, 0), 1);
+  const r = Math.round(a.r * (1 - w) + b.r * w);
+  const g = Math.round(a.g * (1 - w) + b.g * w);
+  const bch = Math.round(a.b * (1 - w) + b.b * w);
+  return '#' + [r, g, bch].map(v => v.toString(16).padStart(2, '0')).join('');
+}
+
+function getLuminance(hex) {
+  const { r, g, b } = hexToRgb(hex);
+  const srgb = [r, g, b].map(v => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+}
+
+function pickTextColor(bgHex) {
+  return getLuminance(bgHex) > 0.6 ? '#111827' : '#f5f7fb';
+}
+
+function resolveThemePalette(themeId, mode) {
+  const theme = VISUAL_THEMES[themeId] || VISUAL_THEMES.default;
+  const palette = theme.colors && theme.colors[mode] ? theme.colors[mode] : theme.colors;
+  const background = palette.background || '#f8f9fa';
+  const surface = palette.surface || background;
+  const surfaceMuted = palette.surfaceMuted || surface;
+  const primary = palette.primary || '#2ecc71';
+  const secondary = palette.secondary || '#27ae60';
+  const text = palette.text || (mode === 'dark' ? '#f5f7fb' : pickTextColor(surface));
+  const textMuted = palette.textMuted || (mode === 'dark' ? mixHex(text, background, 0.35) : mixHex(text, background, 0.55));
+
+  return {
+    primary,
+    secondary,
+    background,
+    surface,
+    surfaceMuted,
+    text,
+    textMuted
+  };
+}
+
+function applyThemeColorsForMode(mode) {
+  if (!state || !state.customization) return;
+  const resolvedMode = mode === 'dark' ? 'dark' : 'light';
+  const palette = resolveThemePalette(state.customization.theme, resolvedMode);
+  const root = document.documentElement.style;
+  const target = document.body ? document.body.style : root;
+  const borderMix = resolvedMode === 'dark' ? 0.7 : 0.45;
+  const plotMix = resolvedMode === 'dark' ? 0.25 : 0.6;
+
+  root.setProperty('--page-bg', palette.background);
+  target.setProperty('--primary-green', palette.primary);
+  target.setProperty('--dark-green', palette.secondary);
+  target.setProperty('--bg-color', palette.background);
+  target.setProperty('--surface-bg', palette.surface);
+  target.setProperty('--surface-muted-bg', palette.surfaceMuted);
+  target.setProperty('--surface-border', mixHex(palette.primary, palette.background, borderMix));
+  target.setProperty('--plot-bg', mixHex(palette.surface, palette.background, plotMix));
+  target.setProperty('--plot-border', mixHex(palette.primary, palette.surface, 0.5));
+  target.setProperty('--tabs-bg', mixHex(palette.surfaceMuted, palette.background, resolvedMode === 'dark' ? 0.3 : 0.2));
+  target.setProperty('--tab-active-bg', palette.surface);
+  target.setProperty('--tab-active-text', palette.primary);
+  target.setProperty('--icon-btn-bg', palette.surface);
+  target.setProperty('--icon-btn-border', mixHex(palette.primary, palette.background, 0.65));
+  target.setProperty('--modal-header-bg', `linear-gradient(135deg, ${palette.primary}, ${palette.secondary})`);
+  target.setProperty('--toast-accent', palette.primary);
+  target.setProperty('--text-dark', palette.text);
+  target.setProperty('--text-light', palette.textMuted);
+}
+
+window.applyThemeColorsForMode = applyThemeColorsForMode;
 
 // Bordures/Clôtures
 const BORDERS = {
@@ -335,24 +502,21 @@ function buyTheme(themeId) {
 }
 
 // Appliquer un thème
-function applyTheme(themeId) {
+function applyVisualTheme(themeId) {
   const theme = VISUAL_THEMES[themeId];
   if (!theme) return false;
 
   if (!state.customization.unlockedThemes.includes(themeId)) {
-    showToast('🔒 Thème non débloqué', 'error');
+    showToast('?? Thème non débloqué', 'error');
     return false;
   }
 
   state.customization.theme = themeId;
 
-  // Appliquer les couleurs CSS
-  document.documentElement.style.setProperty('--primary-green', theme.colors.primary);
-  document.documentElement.style.setProperty('--dark-green', theme.colors.secondary);
-  document.documentElement.style.setProperty('--bg-color', theme.colors.background);
-  document.documentElement.style.setProperty('--text-dark', theme.colors.text);
+  const mode = document.body && document.body.dataset.theme === 'dark' ? 'dark' : 'light';
+  applyThemeColorsForMode(mode);
 
-  showToast(`🎨 Thème "${theme.name}" appliqué`, 'success');
+  showToast(`?? Thème "${theme.name}" appliqué`, 'success');
   saveGame();
   needsRender = true;
   return true;
@@ -563,13 +727,8 @@ function applyCustomization() {
   if (!state.customization) return;
 
   // Appliquer le thème
-  const theme = VISUAL_THEMES[state.customization.theme];
-  if (theme) {
-    document.documentElement.style.setProperty('--primary-green', theme.colors.primary);
-    document.documentElement.style.setProperty('--dark-green', theme.colors.secondary);
-    document.documentElement.style.setProperty('--bg-color', theme.colors.background);
-    document.documentElement.style.setProperty('--text-dark', theme.colors.text);
-  }
+  const mode = document.body && document.body.dataset.theme === 'dark' ? 'dark' : 'light';
+  applyThemeColorsForMode(mode);
 
   // Appliquer la bordure
   const border = BORDERS[state.customization.border];
