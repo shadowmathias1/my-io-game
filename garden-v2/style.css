@@ -762,6 +762,14 @@ h2::before {
   margin-bottom: 15px;
 }
 
+.shop-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .shop-header h2 {
   margin-bottom: 0;
 }
@@ -2509,6 +2517,124 @@ body[data-season="winter"]::after {
   gap: 10px;
   justify-content: center;
   margin-top: 12px;
+}
+
+/* Casino */
+.casino-modal {
+  max-width: 760px;
+}
+
+.casino-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.casino-tab {
+  background: #e6efe8;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 6px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.casino-tab.active {
+  background: var(--primary-green);
+  color: #fff;
+  border-color: transparent;
+}
+
+.casino-content {
+  display: none;
+}
+
+.casino-content.active {
+  display: block;
+}
+
+.casino-panel {
+  background: rgba(245, 248, 246, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.casino-hand {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.casino-hand-title {
+  font-weight: 700;
+}
+
+.casino-cards {
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+}
+
+.casino-total {
+  font-size: 0.95rem;
+  color: #2b3b33;
+}
+
+.casino-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.casino-controls input {
+  width: 110px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  font-weight: 700;
+}
+
+.casino-status {
+  margin-top: 8px;
+  font-weight: 700;
+  min-height: 20px;
+}
+
+.casino-roulette-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.casino-roulette-wheel {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.slot-reels {
+  font-size: 2rem;
+  text-align: center;
+  letter-spacing: 0.2em;
+}
+
+body[data-theme="dark"] .casino-tab {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #eaeaea;
+}
+
+body[data-theme="dark"] .casino-panel {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+body[data-theme="dark"] .casino-total {
+  color: #cfd8d3;
 }
 
 #category-unlock-modal .modal-content {

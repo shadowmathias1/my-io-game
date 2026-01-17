@@ -60,6 +60,8 @@
 
             <button id="lights-btn" class="icon-btn" title="Lumières">&#x1F4A1;</button>
 
+            <button id="casino-btn" class="icon-btn" title="Casino">&#x1F3B0;</button>
+
             <button id="settings-btn" class="icon-btn" title="Param&#xE8;tres">&#9881;</button>
 
           </div>
@@ -144,7 +146,10 @@
 
           <h2>Shop</h2>
 
-          <div class="muted" style="font-size:0.85em;">Prochain stock: <span id="market-timer">0:00</span></div>
+          <div class="shop-header-actions">
+            <div class="muted" style="font-size:0.85em;">Prochain stock: <span id="market-timer">0:00</span></div>
+            <button id="casino-open" class="btn">🎰 Casino</button>
+          </div>
 
         </div>
 
@@ -991,6 +996,71 @@
     </div>
   </div>
 
+
+  <!-- Casino Modal -->
+  <div id="casino-modal" class="modal">
+    <div class="modal-content casino-modal">
+      <div class="modal-header">
+        <h2>🎰 Casino</h2>
+        <button class="modal-close" id="close-casino">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="casino-tabs">
+          <button class="casino-tab active" data-casino-tab="blackjack">Blackjack</button>
+          <button class="casino-tab" data-casino-tab="roulette">Roulette</button>
+          <button class="casino-tab" data-casino-tab="slots">Machine</button>
+        </div>
+
+        <div id="casino-blackjack" class="casino-content active">
+          <div class="casino-panel">
+            <div class="casino-hand">
+              <div class="casino-hand-title">Dealer</div>
+              <div id="blackjack-dealer-cards" class="casino-cards">-</div>
+              <div class="casino-total">Total: <span id="blackjack-dealer-total">?</span></div>
+            </div>
+            <div class="casino-hand">
+              <div class="casino-hand-title">Vous</div>
+              <div id="blackjack-player-cards" class="casino-cards">-</div>
+              <div class="casino-total">Total: <span id="blackjack-player-total">0</span></div>
+            </div>
+          </div>
+          <div class="casino-controls">
+            <input id="blackjack-bet" type="number" min="1" step="1" value="10">
+            <button id="blackjack-deal" class="btn accent">Jouer</button>
+            <button id="blackjack-hit" class="btn" disabled>Tirer</button>
+            <button id="blackjack-stand" class="btn" disabled>Rester</button>
+          </div>
+          <div id="blackjack-status" class="casino-status"></div>
+        </div>
+
+        <div id="casino-roulette" class="casino-content">
+          <div class="casino-panel">
+            <div class="casino-roulette-wheel" id="roulette-wheel">🎯</div>
+            <div id="roulette-result" class="casino-status"></div>
+          </div>
+          <div class="casino-controls">
+            <input id="roulette-bet" type="number" min="1" step="1" value="10">
+            <div class="casino-roulette-buttons" id="roulette-buttons">
+              <button class="btn" data-roulette="red">Rouge</button>
+              <button class="btn" data-roulette="black">Noir</button>
+              <button class="btn accent" data-roulette="green">0 Vert</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="casino-slots" class="casino-content">
+          <div class="casino-panel">
+            <div id="slots-reels" class="slot-reels">- - -</div>
+            <div id="slots-result" class="casino-status"></div>
+          </div>
+          <div class="casino-controls">
+            <input id="slots-bet" type="number" min="1" step="1" value="10">
+            <button id="slots-spin" class="btn accent">Tirer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="inventory-system.js"></script>
   <script src="employees-system.js"></script>

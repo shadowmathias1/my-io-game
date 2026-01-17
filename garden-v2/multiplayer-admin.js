@@ -979,6 +979,18 @@ function handleAdminGift(data) {
       if (!state.owned.buildings) state.owned.buildings = {};
       state.buildingInventory[buildingId] = (state.buildingInventory[buildingId] || 0) + amount;
       state.owned.buildings[buildingId] = (state.owned.buildings[buildingId] || 0) + amount;
+      let building = null;
+      if (typeof getBuildingById === 'function') {
+        building = getBuildingById(buildingId);
+      } else if (typeof BUILDINGS !== 'undefined') {
+        building = BUILDINGS.find(b => b.id === buildingId);
+      }
+      if (building && typeof isPlaceableBuilding === 'function' && isPlaceableBuilding(building)) {
+        if (!state.selectedBuilding) {
+          state.selectedBuilding = buildingId;
+          state.selectedSpecialPlant = null;
+        }
+      }
       showToast('??? Batiment ajoute', 'success');
       applyRender();
       break;

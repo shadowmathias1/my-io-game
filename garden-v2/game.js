@@ -1010,6 +1010,19 @@ let uiCache = {
 
 let uiRefs = {};
 
+const ROULETTE_REDS = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
+const SLOT_SYMBOLS = ['🍒', '🍋', '🍇', '⭐', '🔔', '7'];
+
+const casinoState = {
+  blackjack: {
+    inProgress: false,
+    bet: 0,
+    player: [],
+    dealer: [],
+    revealDealer: false
+  }
+};
+
 
 
 function createEmptyPlot(newUntil = 0) {
@@ -1396,6 +1409,8 @@ function init() {
     closeSettingsBtn.addEventListener('click', closeSettingsModal);
 
   }
+
+  initCasinoUI();
 
   const themeToggleBtn = document.getElementById('theme-toggle');
 
@@ -8725,6 +8740,313 @@ function initAdminPanel() {
 
   bind('admin-force-legendary', forceLegendaryEvent);
 
+}
+
+
+// === CASINO ===
+function initCasinoUI() {
+  const casinoBtn = document.getElementById('casino-btn');
+  if (casinoBtn) {
+    casinoBtn.addEventListener('click', openCasinoModal);
+  }
+
+  const closeCasinoBtn = document.getElementById('close-casino');
+  if (closeCasinoBtn) {
+    closeCasinoBtn.addEventListener('click', closeCasinoModal);
+  }
+
+  const casinoOpenBtn = document.getElementById('casino-open');
+  if (casinoOpenBtn) {
+    casinoOpenBtn.addEventListener('click', openCasinoModal);
+  }
+
+  document.querySelectorAll('.casino-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.casino-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.casino-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      const target = document.getElementById(`casino-${tab.dataset.casinoTab}`);
+      if (target) target.classList.add('active');
+    });
+  });
+
+  const blackjackDeal = document.getElementById('blackjack-deal');
+  if (blackjackDeal) {
+    blackjackDeal.addEventListener('click', startBlackjack);
+  }
+  const blackjackHit = document.getElementById('blackjack-hit');
+  if (blackjackHit) {
+    blackjackHit.addEventListener('click', blackjackHitCard);
+  }
+  const blackjackStand = document.getElementById('blackjack-stand');
+  if (blackjackStand) {
+    blackjackStand.addEventListener('click', blackjackStandHand);
+  }
+
+  const rouletteButtons = document.getElementById('roulette-buttons');
+  if (rouletteButtons) {
+    rouletteButtons.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-roulette]');
+      if (!btn) return;
+      spinRoulette(btn.dataset.roulette);
+    });
+  }
+
+  const slotsSpin = document.getElementById('slots-spin');
+  if (slotsSpin) {
+    slotsSpin.addEventListener('click', spinSlots);
+  }
+
+  resetBlackjackTable();
+}
+
+function openCasinoModal() {
+  const modal = document.getElementById('casino-modal');
+  if (modal) modal.classList.add('show');
+}
+
+function closeCasinoModal() {
+  const modal = document.getElementById('casino-modal');
+  if (modal) modal.classList.remove('show');
+}
+
+function parseBet(inputId) {
+  const input = document.getElementById(inputId);
+  if (!input) return null;
+  const bet = Math.floor(Number(input.value));
+  if (!Number.isFinite(bet) || bet <= 0) return null;
+  return bet;
+}
+
+function takeBet(bet) {
+  if (!Number.isFinite(bet) || bet <= 0) {
+    showToast('Mise invalide');
+    return false;
+  }
+  if (state.coins < bet) {
+    showToast('Pas assez de coins');
+    return false;
+  }
+  state.coins -= bet;
+  needsRender = true;
+  needsShopRender = true;
+  return true;
+}
+
+function setCasinoStatus(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
+function resetBlackjackTable() {
+  casinoState.blackjack = {
+    inProgress: false,
+    bet: 0,
+    player: [],
+    dealer: [],
+    revealDealer: false
+  };
+  setBlackjackControls(false);
+  renderBlackjack(false);
+  setCasinoStatus('blackjack-status', '');
+}
+
+function setBlackjackControls(active) {
+  const hit = document.getElementById('blackjack-hit');
+  const stand = document.getElementById('blackjack-stand');
+  if (hit) hit.disabled = !active;
+  if (stand) stand.disabled = !active;
+}
+
+function drawCard() {
+  return Math.floor(Math.random() * 13) + 1;
+}
+
+function cardLabel(rank) {
+  if (rank === 1) return 'A';
+  if (rank === 11) return 'J';
+  if (rank === 12) return 'Q';
+  if (rank === 13) return 'K';
+  return String(rank);
+}
+
+function handValue(hand) {
+  let total = 0;
+  let aces = 0;
+  hand.forEach(rank => {
+    if (rank === 1) {
+      total += 11;
+      aces += 1;
+    } else if (rank >= 11) {
+      total += 10;
+    } else {
+      total += rank;
+    }
+  });
+  while (total > 21 && aces > 0) {
+    total -= 10;
+    aces -= 1;
+  }
+  return total;
+}
+
+function renderBlackjack(revealDealer) {
+  const bj = casinoState.blackjack;
+  const dealerCardsEl = document.getElementById('blackjack-dealer-cards');
+  const playerCardsEl = document.getElementById('blackjack-player-cards');
+  const dealerTotalEl = document.getElementById('blackjack-dealer-total');
+  const playerTotalEl = document.getElementById('blackjack-player-total');
+  if (!dealerCardsEl || !playerCardsEl || !dealerTotalEl || !playerTotalEl) return;
+
+  const showDealer = revealDealer || bj.revealDealer || !bj.inProgress;
+  const dealerCards = bj.dealer.length
+    ? (showDealer ? bj.dealer.map(cardLabel) : [cardLabel(bj.dealer[0] || 0), '?'])
+    : ['-'];
+  const playerCards = bj.player.length ? bj.player.map(cardLabel) : ['-'];
+
+  dealerCardsEl.textContent = dealerCards.join(' ');
+  playerCardsEl.textContent = playerCards.join(' ');
+  dealerTotalEl.textContent = showDealer && bj.dealer.length ? String(handValue(bj.dealer)) : '?';
+  playerTotalEl.textContent = bj.player.length ? String(handValue(bj.player)) : '0';
+}
+
+function startBlackjack() {
+  const bj = casinoState.blackjack;
+  if (bj.inProgress) {
+    showToast('Terminez la main en cours.');
+    return;
+  }
+
+  const bet = parseBet('blackjack-bet');
+  if (!takeBet(bet)) return;
+  bj.inProgress = true;
+  bj.bet = bet;
+  bj.player = [drawCard(), drawCard()];
+  bj.dealer = [drawCard(), drawCard()];
+  bj.revealDealer = false;
+
+  setBlackjackControls(true);
+  renderBlackjack(false);
+
+  if (handValue(bj.player) === 21) {
+    finishBlackjack('blackjack');
+  } else {
+    setCasinoStatus('blackjack-status', 'A vous de jouer.');
+  }
+}
+
+function blackjackHitCard() {
+  const bj = casinoState.blackjack;
+  if (!bj.inProgress) return;
+  bj.player.push(drawCard());
+  renderBlackjack(false);
+
+  if (handValue(bj.player) > 21) {
+    finishBlackjack('bust');
+  }
+}
+
+function blackjackStandHand() {
+  const bj = casinoState.blackjack;
+  if (!bj.inProgress) return;
+  while (handValue(bj.dealer) < 17) {
+    bj.dealer.push(drawCard());
+  }
+  finishBlackjack('stand');
+}
+
+function finishBlackjack(result) {
+  const bj = casinoState.blackjack;
+  bj.inProgress = false;
+  bj.revealDealer = true;
+
+  const playerTotal = handValue(bj.player);
+  const dealerTotal = handValue(bj.dealer);
+  let payout = 0;
+  let message = '';
+
+  if (result === 'bust') {
+    message = `Perdu. Vous avez ${playerTotal}.`;
+  } else if (result === 'blackjack') {
+    payout = bj.bet * 2;
+    message = `Blackjack! +${payout} coins.`;
+  } else if (dealerTotal > 21) {
+    payout = bj.bet * 2;
+    message = `Dealer bust (${dealerTotal}). +${payout} coins.`;
+  } else if (playerTotal > dealerTotal) {
+    payout = bj.bet * 2;
+    message = `Gagné ${playerTotal} vs ${dealerTotal}. +${payout} coins.`;
+  } else if (playerTotal === dealerTotal) {
+    payout = bj.bet;
+    message = `Egalité ${playerTotal}. Mise rendue.`;
+  } else {
+    message = `Perdu ${playerTotal} vs ${dealerTotal}.`;
+  }
+
+  if (payout > 0) {
+    addCoins(payout);
+    needsRender = true;
+    needsShopRender = true;
+  }
+
+  setBlackjackControls(false);
+  renderBlackjack(true);
+  setCasinoStatus('blackjack-status', message);
+}
+
+function spinRoulette(choice) {
+  const bet = parseBet('roulette-bet');
+  if (!takeBet(bet)) return;
+
+  const number = Math.floor(Math.random() * 37);
+  const color = number === 0 ? 'green' : (ROULETTE_REDS.has(number) ? 'red' : 'black');
+  const colorLabel = color === 'red' ? 'Rouge' : color === 'black' ? 'Noir' : 'Vert';
+  let payout = 0;
+
+  if (choice === color) {
+    payout = bet * (color === 'green' ? 14 : 2);
+    addCoins(payout);
+    needsRender = true;
+    needsShopRender = true;
+  }
+
+  const wheel = document.getElementById('roulette-wheel');
+  if (wheel) wheel.textContent = `${number} ${colorLabel}`;
+
+  const message = payout > 0
+    ? `Gagné! +${payout} coins.`
+    : `Perdu. Sortie: ${number} ${colorLabel}.`;
+  setCasinoStatus('roulette-result', message);
+}
+
+function spinSlots() {
+  const bet = parseBet('slots-bet');
+  if (!takeBet(bet)) return;
+
+  const reels = [
+    SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)],
+    SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)],
+    SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)]
+  ];
+
+  const reelsEl = document.getElementById('slots-reels');
+  if (reelsEl) reelsEl.textContent = reels.join(' ');
+
+  let payout = 0;
+  if (reels[0] === reels[1] && reels[1] === reels[2]) {
+    payout = bet * 5;
+  } else if (reels[0] === reels[1] || reels[0] === reels[2] || reels[1] === reels[2]) {
+    payout = bet * 2;
+  }
+
+  if (payout > 0) {
+    addCoins(payout);
+    needsRender = true;
+    needsShopRender = true;
+    setCasinoStatus('slots-result', `Gagné! +${payout} coins.`);
+  } else {
+    setCasinoStatus('slots-result', 'Perdu. Reessayez!');
+  }
 }
 
 
